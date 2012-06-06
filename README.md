@@ -4,7 +4,7 @@ The BEACON Toolkit is a collection of tools and recipes for creating,
 manipulating, producing, and visualizing all stages of research in evolution
 and ecology.
 
-## Contributers
+## Contributors
 * [Brian Connelly](http://www.bconnelly.net)
 * [Luis Zaman](http://www.luiszaman.com)
 
