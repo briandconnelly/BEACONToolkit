@@ -39,8 +39,28 @@ Can use the unpack argument, which is helpful for plotting:
 
 ### Pandas
 
-* TODO
-* TODO: can work with time series data.
+[Pandas](http://pandas.pydata.org) is a Python library designed to support data
+reading, writing, and manipulation.  Notably, Pandas also includes
+functionality for working with timeseries data.
+
+
+DataFrame
+
+#### Reading CSV
+
+TODO: describe example
+
+    import pandas as p
+    data = p.read_csv("Tax_Year_2007_County_Income_Data.csv", header=0)
+
+TODO: adding, deleting, and selecting rows
+
+    sc = a['State Code']
+    sc[sc < 3]
+
+TODO: grouping
+
+
 
 
 ## R and CSV files
