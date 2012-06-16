@@ -1,6 +1,13 @@
 # Working with CSV datasets
 
-Comma-separated value (CSV) files are a plain-text
+Comma-separated value (CSV) files provide an application-agnostic way of 
+storing and importing data into many applications. Because their content
+is plain-text, they have a longer "shelf life" than proprietary file-formats
+that depend on particular versions of applications. Dryad, the online data
+repository, often requires uploaded data be in plain-text formats such as 
+CSVs because of this reason. Despite all the obvious benefits of dealing with 
+data in plain-text, journals such as Evolution, Molecular Ecology, and AmNat are
+requiring data be made available in Dryad.
 
 intro
 * format, benefits, etc.
