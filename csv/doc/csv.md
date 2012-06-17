@@ -50,11 +50,6 @@ CSV format:
 	1, 2, 3, 1.1
 	1, 2, 4, 1.5
 
-intro
-* format, benefits, etc.
-* some common delimiters
-* headers
-* comments
 
 ## Python and CSV files
 
