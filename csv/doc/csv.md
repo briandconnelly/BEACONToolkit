@@ -123,8 +123,58 @@ TODO
 
 ## Excel and CSV files
 
-* TODO: reading/writing
-* TODO: how to transpose data
+Support for reading and writing data in CSV format is included in Microsoft
+Excel and each of the Excel-like spreadsheet programs (e.g., Numbers, Google
+Docs, OpenOffice Calc). Like with the native formats, CSV files can be opened
+with the **Open** item in the **File** menu.
+
+To save data as a CSV file in Excel, the **Save As** item in the **File** menu
+is used. Shown below, the *Format*  should be set to *Comma Separated Values
+(.csv)*.  Menu options for other spreadsheets vary slightly.
+
+![Saving data as CSV with Excel](figures/excel-saveas.png)
+
+
+### Transposing HORIZONTAL Data
+
+CSV data is intended to be row-based, with each row representing a data point.
+To export data that have been arranged in a column-based layout (see example
+below), the data must first be transposed.
+
+![Column-based data in Excel](figures/excel-horizdata.png)
+
+The easiest way to accomplish this is to select the data and copy it. Then,
+select the cell that will be at the upper left area of the transpose data,
+select **Paste Special...** from the **Edit** menu, and choose the *Transpose*
+option before selecting the **OK** button.
+
+![Excel's Paste Special Dialog Window](figures/excel-paste_special.png)
+
+Now that the data are arranged in rows, the other data can be deleted, and the
+spreadsheet can be saved as a CSV file as described previously. This method of
+copying data and pasting transposed is only supported in Excel and OpenOffice
+Calc.
+
+In Google Docs (as well as Excel), data can be transposed using the
+**TRANSPOSE** function. To do this, first select a region of empty cells that
+is equal in size to the data to be transposed.  For example, if the
+column-based data occupies 3 rows by 9 columns as in the picture above, select
+an area that is 9 rows by 3 columns.  Once the target region has been selected,
+enter:
+
+    =TRANSPOSE(A1:I3)
+
+To take the data from the region bounded by cells A1 in the upper left and I3
+in the lower right, transpose it, and paste it into the selected region. Excel
+users should conclude entering this formula with Control-Shift-Enter instead of
+Enter.
+
+Unfortunately, Numbers does not provide any easy ways to transpose data.  The
+best plan for these situations would be to export the column-based data as a
+CSV file, read that file using the Python tools described in this Chapter, and
+transpose the data in Python with a function like *transpose* in NumPy.
+
+### Replacing Newlines when using Unix Environments
 
 
 ## CSV files and UNIX shells
