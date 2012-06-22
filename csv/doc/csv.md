@@ -269,20 +269,19 @@ TODO
 
 
 
-### Replacing Newlines when using Unix Environments
-
-TODO
-
-
 ## CSV files and UNIX shells
 
 There are many classic command-line tools for Unix that can be used to
 manipulate CSV files very quickly. This section prevents a number of them
 cookbook style.
 
-your_cmd | sed "1 d" - to remove first line of output
+### Removing Headers
+TODO: text
 
+    your_cmd | sed "1 d"
 
-TODO: intro
-
+### Stripping Comments
 TODO: stripping comments with grep
+
+### Replacing Newlines
+TODO:
