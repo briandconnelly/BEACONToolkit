@@ -21,6 +21,7 @@ data, or a combination of the two.  For example, this is a valid CSV entry:
 
     Wild Type, 2, 3.0, 8/2
 
+## Annotating CSV Files
 To aid in understanding a dataset, *metadata*, or additional information about
 the data, can be added by the use of *headers* and *comments*.  A header row is
 used to describe the data stored in each column of a dataset.  Comments allow
@@ -46,6 +47,7 @@ with several common tools available on the Unix command line, which will be
 introduced later in this chapter. Alternately, thee metadata can be removed
 manually or with a script.
 
+## Working with Time Series Data
 The most unintuitive case (for me) of drafting data sets in the CSV format is
 the time-series. But once you get the hang of thinking about your data in a 
 tabular format, it will become second nature. Here is an example of a time series in
@@ -76,8 +78,7 @@ To save data as a CSV file in Excel, the **Save As** item in the **File** menu
 is used. Shown below, the *Format*  should be set to *Comma Separated Values
 (.csv)*.  Menu options for other spreadsheets vary slightly.
 
-![Saving data as CSV with Excel](figures/excel-saveas.png)
-
+![Saving data as CSV with Excel](https://github.com/briandconnelly/BEACONToolkit/raw/master/csv/doc/figures/excel-saveas.png)
 
 ### Transposing Column-Based Data
 
@@ -85,14 +86,14 @@ CSV data is intended to be row-based, with each row representing a data point.
 To export data that have been arranged in a column-based layout (see example
 below), the data must first be transposed.
 
-![Column-based data in Excel](figures/excel-horizdata.png)
+![Column-based data in Excel](https://github.com/briandconnelly/BEACONToolkit/raw/master/csv/doc/figures/excel-horizdata.png)
 
 The easiest way to accomplish this is to select the data and copy it. Then,
 select the cell that will be at the upper left area of the transpose data,
 select **Paste Special...** from the **Edit** menu, and choose the *Transpose*
 option before selecting the **OK** button.
 
-![Excel's Paste Special Dialog Window](figures/excel-paste_special.png)
+![Excel's Paste Special Dialog Window](https://github.com/briandconnelly/BEACONToolkit/raw/master/csv/doc/figures/excel-paste_special.png)
 
 Now that the data are arranged in rows, the other data can be deleted, and the
 spreadsheet can be saved as a CSV file as described previously. This method of
