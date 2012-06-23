@@ -21,7 +21,7 @@ add_row <- function(dataframe, row)
 	}
 	else
 	{
-		print("Row length differs from DataFrame size")
+		print("Row length differs from DataFrame length")
 		dataframe <- NULL
 	}
 	return(dataframe)
@@ -41,7 +41,7 @@ add_column <- function(dataframe, column, column_header="NewColumn")
 	}
 	else
 	{
-		print("Row length differs from DataFrame size")
+		print("Column length differs from DataFrame size")
 		dataframe <- NULL
 	}
 	return(dataframe)
