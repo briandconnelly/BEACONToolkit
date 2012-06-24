@@ -314,13 +314,78 @@ There are many classic command-line tools for Unix that can be used to
 manipulate CSV files very quickly. This section prevents a number of them
 cookbook style.
 
-### Removing Headers
-TODO: text
-
-    your_cmd | sed "1 d"
-
 ### Stripping Comments
-TODO: stripping comments with grep
+
+Some programs, such as Apple Numbers, do not support comments in CSV files.
+Fortunately, comments can very easily be stripped using the `grep` command.
+The following command strips out all lines that begin with the `#` character
+from the file `luminescence.csv`:
+
+    grep -v ^# luminescence.csv
+
+This command will print the new contents.  To save them to a new file called
+`luminescence-nocomments.csv`:
+
+    grep -v ^# luminescence.csv > luminescence-nocomments.csv
+
+In the Unix shell, the `>` character means to place the output of the previous
+command into the given file.  If a file already exists with that name, it will
+be replaced by the new one.
+
 
 ### Replacing Newlines
 TODO:
+- hpc systems have dos2unix
+
+### Removing Headers
+
+Headers can also be easily removed. To remove the first line from the
+`luminescence.csv` file:
+
+    cat luminescence.csv | sed "1 d"
+
+This uses the Unix *pipe* (`|`) symbol to connect the output of the `cat`
+program, which just prints the contents of the file, to the `sed` program,
+which we use to filter out the first line. The `1` can be replaced in the
+parameters to `sed` to allow a different number of lines to be skipped.
+
+As before, the results of this command are printed. To save these results as a
+new file, the output can be redirected:
+
+    cat luminescence.csv | sed "1 d" > luminescence-noheader.csv
+
+This command won't quite have the effect we want, though, because the first
+line in `luminescence.csv` is a comment, not a header. We can combine these two
+commands using pipes to first strip out comments, remove the first line of the
+resulting data, and save the rest to a new file:
+
+    cat luminescence.csv | grep -v ^# | sed "1 d" > luminescence-data.csv
+
+
+### Combining Multiple Files
+
+THe `cat` program, which we've used to output the contents of a file, can be
+used to combine two or more files. To write add the contents of `data2.csv`
+after the contents of `data1.csv`,
+
+    cat data2.csv >> data1.csv
+
+Note that we used `>>` instead of `>`, which would have replaced `data1.csv`
+with the contents of `data2.csv`. In the Unix shell, `>>` means to add the
+output to the bottom of the given file if it exists.  Otherwise, a new file
+will be created.  Now, `data1.csv` has the contents of both files. If
+`data2.csv` had a header, this could cause some confusion, as there would be a
+second header in the middle of the file. Combining what we did before, we can
+first remove the first line of `data2.csv` before adding it to `data1.csv`:
+
+    cat data2.csv | sed "1 d" >> data1.csv
+
+Similarly, we can combine multiple files into 1 by listing all of them as
+arguments to `cat`:
+
+    cat data1.csv data2.csv data3.csv > combined.csv
+
+Here, the contents of `data1.csv`, `data2.csv`, and `data3.csv` were combined
+and placed in a new file called `combined.csv`. Doing this while also stripping
+the headers from the files is a bit more complicated.
+

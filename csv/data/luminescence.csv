@@ -1,3 +1,5 @@
+# Luminescence of evolved V. harveyi
+# Eric Bruger - 2012/06/27
 Plate,Time,Temperature,Row,Column,Luminescence
 Plate#1,0:00,26.3,0,0,7444.945
 Plate#1,0:00,26.3,0,1,4845.375
@@ -14,6 +16,7 @@ Plate#1,0:00,26.3,0,11,1458.78
 Plate#1,0:00,26.3,1,0,2377690.0
 Plate#1,0:00,26.3,1,1,10744.093
 Plate#1,0:00,26.3,1,2,10507.588
+# Look at that luminoscity!!!
 Plate#1,0:00,26.3,1,3,1303908.75
 Plate#1,0:00,26.3,1,4,8029.252
 Plate#1,0:00,26.3,1,5,6226.645
