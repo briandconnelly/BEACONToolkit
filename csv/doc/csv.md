@@ -1,4 +1,4 @@
-# Working with CSV datasets
+# Working with CSV Datasets
 
 Comma-separated value (CSV) files provide an application-agnostic way of 
 storing and importing data into many applications. Because their content
@@ -328,11 +328,31 @@ TODO
 
 
 
-## CSV files and UNIX shells
+## CSV files and the Unix Shell
 
-There are many classic command-line tools for Unix that can be used to
-manipulate CSV files very quickly. This section prevents a number of them
-cookbook style.
+Although the Unix command line is a very intimidating place for many people, it
+contains many programs that can be used to manipulate CSV files very quickly
+and easily.  This is especially useful for those who perform computational work
+in Unix-based environments such as high-performance computing centers, Linux
+workstations, and even Apple computers.  This section prevents a number of them
+cookbook style, showing how to use commands to accomplish different tasks.  As
+shown in a few examples, the real power of the Unix shell is in connecting
+several of these commands to perform multiple operations at once.
+
+### Replacing Newlines
+
+Before we begin, though, we need to first talk about *newlines*.  Although you
+normally don't see them, the end of each line in text files contains a newline
+character. For some software, newlines can be a source of problems, because the
+specific symbols that Windows computers and Unix computers (including Mac OS X
+and Linux) use for newlines is different.
+
+To use any of the commands shown in this section on files which were created on
+a Windows machine, the newlines first need to be converted to the Unix format.
+For example, the `dos2unix` command can be used to easily convert `myfile.csv`,
+which was created on a Windows machine:
+
+    dos2unix myfile.csv
 
 ### Stripping Comments
 
@@ -351,11 +371,6 @@ This command will print the new contents.  To save them to a new file called
 In the Unix shell, the `>` character means to place the output of the previous
 command into the given file.  If a file already exists with that name, it will
 be replaced by the new one.
-
-
-### Replacing Newlines
-TODO:
-- hpc systems have dos2unix
 
 ### Removing Headers
 
@@ -384,9 +399,9 @@ resulting data, and save the rest to a new file:
 
 ### Combining Multiple Files
 
-The `cat` program, which we've used to output the contents of a file, can be
-used to combine two or more files. To write add the contents of `data2.csv`
-after the contents of `data1.csv`,
+The `cat` program, which previously we've used to output the contents of a
+file, can be used to combine two or more files. To write add the contents of
+`data2.csv` after the contents of `data1.csv`,
 
     cat data2.csv >> data1.csv
 
@@ -427,4 +442,26 @@ new file called `timetemp.csv`:
 
 ### Extracting Specific Rows
 
-TODO
+There are a number of ways in which specific rows can be extracted from CSV
+files. The `head` and `tail` commands output the first and last rows of a file,
+respectively. For example, to output the first 12 rows of `luminescence.csv`:
+
+    head -n 12 luminescence.csv
+
+Similarly, the last 8 rows of `luminescence.csv` can be shown with `tail`:
+
+    tail -n 8 luminescence.csv
+
+The `sed` command can be used to extract a range of lines. Here, we extract
+lines 50 through 97:
+
+    sed -n "50,97 p" luminescence.csv
+
+Often, though, we want to extract rows based on specific criteria. For these
+queries, the `grep` command can be used, which searches a file for a particular
+pattern. Using `grep`, we can extract all data from Plate#2:
+
+    grep "Plate#2" luminescence.csv
+
+`grep` can support much more complex searches using *regular expressions*.
+Many good references for regular expressions can be found online.
