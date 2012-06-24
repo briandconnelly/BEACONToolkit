@@ -103,7 +103,25 @@ simply add a column that indicates when the measurement was taken:
     Plate#2,30:00,30.0,0,0,5810.844
     Plate#2,30:00,30.0,0,1,3652.258
 
-TODO: avida example
+As another example, the data below show reaction counts in one Avida population
+over 1,000 updates for one population:
+
+    # Reaction counts
+    # Brian Connelly - 2012/03/03
+    Update,NOT,NAND,AND,ORN,OR,ANDN,NOR,XOR,EQU
+    98000.0,172.0,2.0,33.0,35.0,2167.0,1007.0,4377.0,0.0,0.0
+    98100.0,195.0,4.0,40.0,28.0,2185.0,1085.0,4408.0,0.0,0.0
+    98200.0,191.0,2.0,37.0,31.0,2147.0,1004.0,4278.0,0.0,0.0
+    98300.0,177.0,5.0,32.0,27.0,2239.0,904.0,4363.0,0.0,0.0
+    98400.0,191.0,6.0,45.0,30.0,2285.0,986.0,4390.0,0.0,0.0
+    98500.0,187.0,11.0,34.0,22.0,2277.0,1072.0,4485.0,0.0,0.0
+    98600.0,205.0,6.0,38.0,38.0,2417.0,956.0,4449.0,0.0,0.0
+    98700.0,158.0,7.0,48.0,21.0,2461.0,930.0,4501.0,0.0,0.0
+    98800.0,176.0,8.0,58.0,20.0,2265.0,931.0,4267.0,0.0,0.0
+    98900.0,150.0,5.0,45.0,31.0,2199.0,1030.0,4440.0,0.0,0.0
+
+Avida output data can be converted to CSV using the `avida2csv.py` script
+included with BEACONToolkit.
 
 ## Excel and CSV files
 
