@@ -33,12 +33,17 @@ subsequent text on that line should be ignored.  For comments that span
 multiple lines, a comment character must be included at the beginning of each
 line.  The following dataset includes both headers and comments:
 
-    # This data set has both comments and headers
-	Treatment, Replicate, Fitness
-	1, 1, 1.0
-	1, 2, 1.5
-	2, 1, 1.1
-	2, 2, 1.6
+    # Luminescence of evolved V. harveyi
+    # Eric Bruger - 2012/06/27
+    Temperature,Row,Column,Luminescence
+    26.3,0,0,7444.945
+    26.3,0,1,4845.375
+    26.3,0,2,4056.362
+    # Look at this luminescence!!!
+    26.3,0,3,4883.137
+    26.3,0,4,3593.289
+    26.3,0,5,2645.281
+    26.3,1,2,10507.588
 
 It is important to note, however, that not all programs that support
 CSV-formatted files support headers or comments. When using these programs,
@@ -47,27 +52,58 @@ with several common tools available on the Unix command line, which will be
 introduced later in this chapter. Alternately, thee metadata can be removed
 manually or with a script.
 
+## Including Replicates
+
+In most cases, data sets will contain measurements from multiple replicates.
+For example, the luminescence data might contain data from reads of multiple
+plates. Since these data describe the same thing, it makes sense for them to be
+stored in the same file.  However, if we just added these data to the end of
+file, it would not be possible to differentiate between the data for row 0,
+column 0 of the one plate and any other plate if we keep with the
+Temperature-Row-Column-Luminescene format.
+
+To handle replicates, we can add a new column for each entry that specifies the
+plate from which each data point were acquired.
+
+    # Luminescence of evolved V. harveyi
+    # Eric Bruger - 2012/06/27
+    Plate,Temperature,Row,Column,Luminescence
+    Plate#1,26.3,0,0,7444.945
+    Plate#1,26.3,0,1,4845.375
+    Plate#1,26.3,0,2,4056.362
+    Plate#1,26.3,0,3,4883.137
+    Plate#1,26.3,0,4,3593.289
+    Plate#1,26.3,0,5,2645.281
+    Plate#2,30.0,0,0,5713.744
+    Plate#2,30.0,0,1,3491.94
+    Plate#2,30.0,0,2,2851.252
+    Plate#2,30.0,0,3,3872.232
+    Plate#2,30.0,0,4,2632.069
+    Plate#2,30.0,0,5,1594.228
+
 ## Working with Time Series Data
-The most unintuitive case (for me) of drafting data sets in the CSV format is
-the time-series. But once you get the hang of thinking about your data in a 
-tabular format, it will become second nature. Here is an example of a time series in
-CSV format:
 
-    # A fake dataset of fitness over time
-	Treatment, Replicate, Time, Fitness
-	1, 1, 1, 1.0
-	1, 1, 2, 1.1
-	1, 1, 3, 1.2
-	1, 1, 4, 1.3
-	1, 2, 1, 1.0
-	1, 2, 2, 1.0
-	1, 2, 3, 1.1
-	1, 2, 4, 1.5
+Similarly, time series can be thought of as measurements replicated over time.
+To augment our data set to show multiple reads of the plates over time, we can
+simply add a column that indicates when the measurement was taken:
 
+    # Luminescence of evolved V. harveyi
+    # Eric Bruger - 2012/06/27
+    Plate,Time,Temperature,Row,Column,Luminescence
+    Plate#1,0:00,26.3,0,0,7444.945
+    Plate#1,0:00,26.3,0,1,4845.375
+    Plate#1,15:00,30.1,0,0,6088.0
+    Plate#1,15:00,30.1,0,1,3976.694
+    Plate#1,30:00,30.0,0,0,6563.678
+    Plate#1,30:00,30.0,0,1,4188.048
+    Plate#2,0:00,30.0,0,0,6716.929
+    Plate#2,0:00,30.0,0,1,4153.633
+    Plate#2,15:00,30.0,0,0,6672.662
+    Plate#2,15:00,30.0,0,1,4167.991
+    Plate#2,30:00,30.0,0,0,5810.844
+    Plate#2,30:00,30.0,0,1,3652.258
 
 ## Excel and CSV files
-
-TODO: intro.  excel kind of a natural way to think about csvs.
 
 Support for reading and writing data in CSV format is included in Microsoft
 Excel and each of the Excel-like spreadsheet programs (e.g., Numbers, Google
@@ -79,6 +115,9 @@ is used. Shown below, the *Format*  should be set to *Comma Separated Values
 (.csv)*.  Menu options for other spreadsheets vary slightly.
 
 ![Saving data as CSV with Excel](https://github.com/briandconnelly/BEACONToolkit/raw/master/csv/doc/figures/excel-saveas.png)
+
+It should be noted, though, that formulas included in spreadsheets will not be
+saved in the resulting CSV files, only their values.
 
 ### Transposing Column-Based Data
 
