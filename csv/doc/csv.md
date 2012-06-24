@@ -103,6 +103,8 @@ simply add a column that indicates when the measurement was taken:
     Plate#2,30:00,30.0,0,0,5810.844
     Plate#2,30:00,30.0,0,1,3652.258
 
+TODO: avida example
+
 ## Excel and CSV files
 
 Support for reading and writing data in CSV format is included in Microsoft
@@ -364,7 +366,7 @@ resulting data, and save the rest to a new file:
 
 ### Combining Multiple Files
 
-THe `cat` program, which we've used to output the contents of a file, can be
+The `cat` program, which we've used to output the contents of a file, can be
 used to combine two or more files. To write add the contents of `data2.csv`
 after the contents of `data1.csv`,
 
@@ -389,3 +391,22 @@ Here, the contents of `data1.csv`, `data2.csv`, and `data3.csv` were combined
 and placed in a new file called `combined.csv`. Doing this while also stripping
 the headers from the files is a bit more complicated.
 
+
+### Extracting Specific Columns
+
+The `cut` command can be extrenely useful for extracting columns from a CSV
+file. For example, to extract the third column (Temperature) from
+`luminescence.csv`:
+
+    cut -f 3 -d , luminescence.csv
+
+where `-f 3` specifies that we want the third field, and `d ,` indicates that
+the fields are separated by commas. We can specify multiple columns as well, so
+to get the Time and Temperature of each entry in the data file and save it to a
+new file called `timetemp.csv`:
+
+    cut -f 2,3 -d , luminescence.csv > timetemp.csv
+
+### Extracting Specific Rows
+
+TODO
