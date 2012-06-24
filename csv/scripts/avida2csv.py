@@ -39,7 +39,7 @@ def avida2csv():
 
         m = re.match("^\s*#", line)
         if m:
-            # Skip empty lines
+            # Skip comment lines
             continue
         else:
             line_toks = line.split(" ")
