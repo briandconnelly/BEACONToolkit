@@ -1,37 +1,53 @@
-# Working with CSV Datasets
+Working with CSV Datasets
 
-Comma-separated value (CSV) files provide an application-agnostic way of 
-storing and importing data into many applications. Because their content
-is plain-text, they have a longer "shelf life" than proprietary file-formats
-that depend on particular versions of applications. Dryad, the online data
-repository, often requires uploaded data be in plain-text formats such as 
-CSVs because of this reason. Despite all the obvious benefits of dealing with 
-data in plain-text, several journals such as Evolution, Molecular Ecology, and 
-AmNat are requiring data be made available in Dryad.
+Comma-separated value (CSV) files store data, both numeric and text, as plain
+text. Because of this, CSV files provide two main benefits: they can be opened
+using a wide variety of software, including free and open-source software, and
+they are not tied to any particular version of software. This flexibility makes
+CSV files particularly well suited for collaboration and for data sharing. For
+example, Dryad, the online data repository for data underlying peer-reviewed
+publications, prefers the use of plain-text formats such as CSV. As the use of
+such public repositories is increasingly required by journals such as
+Evolution, Molecular Ecology, and American Naturalist, developing a workflow
+using CSV files can greatly facilitate this process.
 
-## Overview
+# Structure of CSV Files
 
 While there is no official structure to CSV files, there is a common format
 often followed when dealing with data. In particular, data should be organized
 as a table, with one record per row, and where each record has the same number
-of elements.  Each record in the table is a line in the CSV file, and each
-element in a record is delimited with a specified *delimiter* (typically a
-comma, hence CSV, though it need not be). Each element can be text, numeric
-data, or a combination of the two.  For example, this is a valid CSV entry:
+of elements.  Each element in a record is delimited with a specified
+*delimiter*. Although the use of commas as delimiters is common, as the name
+implies, other delimiters such as tabs and semicolons are also frequently used.
+Each element can be text, numeric data, or a combination of the two.  For
+example, the following is a valid CSV entry:
 
     Wild Type, 2, 3.0, 8/2
 
+This example has four elements per entry.  The first element, *Wild Type*, is
+text.  The second and third elements are numeric data. Finally the fourth
+element contains a combination of numeric and text data. Whenever text data are
+included, that element is interpreted as text.
+
+Because CSV files arrange data in a tabular format, each element shares some
+relationship with the corresponding element in other records. In other words,
+the elements along each column should contain data corresponding to the same
+aspect of whatever is being recorded in the dataset.  In the example data
+above, the first element in each record represents the phenotype of the
+organism for which the measurement was taken.
+
 ## Annotating CSV Files
+
 To aid in understanding a dataset, *metadata*, or additional information about
-the data, can be added by the use of *headers* and *comments*.  A header row is
-used to describe the data stored in each column of a dataset.  Comments allow
-CSV files to contain additional notes about the data, such as a description of
-when and where the data were acquired, how the dataset was obtained, or any
-remarks about a specific data point.  Comments are identified by a single
-character, typically `#`, at the beginning of a line, and specify that all
-subsequent text on that line should be ignored.  For comments that span
-multiple lines, a comment character must be included at the beginning of each
-line.  The following dataset includes both headers and comments:
+the data, can be added through the use of *headers* and *comments*.  A header
+row is used to describe the data stored in each column of a dataset.  Comments
+allow CSV files to contain additional notes about the data, such as a
+description of when and where the data were acquired, how the dataset was
+obtained, or any remarks about a specific data point.  Comments are identified
+by a single character, typically `#`, at the beginning of a line, and specify
+that all subsequent text on that line should be ignored.  For comments that
+span multiple lines, a comment character must be included at the beginning of
+each line.  The following dataset includes both headers and comments:
 
     # Luminescence of evolved V. harveyi
     # Eric Bruger - 2012/06/27
@@ -123,7 +139,7 @@ over 1,000 updates for one population:
 Avida output data can be converted to CSV using the `avida2csv.py` script
 included with BEACONToolkit.
 
-## Excel and CSV files
+# Excel and CSV files
 
 Support for reading and writing data in CSV format is included in Microsoft
 Excel and each of the Excel-like spreadsheet programs (e.g., Numbers, Google
@@ -139,7 +155,7 @@ is used. Shown below, the *Format*  should be set to *Comma Separated Values
 It should be noted, though, that formulas included in spreadsheets will not be
 saved in the resulting CSV files, only their values.
 
-### Transposing Column-Based Data
+## Transposing Column-Based Data
 
 CSV data is intended to be row-based, with each row representing a data point.
 To export data that have been arranged in a column-based layout (see example
@@ -179,7 +195,22 @@ CSV file, read that file using the Python tools described in this Chapter, and
 transpose the data in Python with a function like *transpose* in NumPy.
 
 
-## Python and CSV files
+# R and CSV files
+
+brief overview of R and CSV
+
+
+## Reading CSV files
+
+TODO
+
+
+## Writing CSV files
+
+TODO
+
+
+# Python and CSV files
 
 There are a number of different ways for interacting with CSV data in Python.
 All Python distributions include the csv module, described below, which allows
@@ -187,9 +218,9 @@ for reading and writing CSV-formatted data. Additional modules such as numpy
 and Pandas also offer powerful tools for interacting with CSV-formatted
 datasets. This section introduces each of these tools.
 
-### Python's csv Module
+## Python's csv Module
 
-#### Reading
+### Reading
 All Python installations include the `csv` module, which provides functionality
 for reading and writing CSV files. First, the following Python code opens and
 reads a CSV file named `platedata.csv`:
@@ -226,7 +257,7 @@ TODO: more
 TODO: handling comments
 TODO: handling headers
 
-#### Writing
+### Writing
 
 The `csv` module also supports writing data to CSV files. To create an object
 that writes data to the file `platedata_modified.csv`:
@@ -248,7 +279,7 @@ numeric data, calculate the
 * TODO: regular stuff
 * TODO: dict stuff
 
-### NumPy/scipy
+## NumPy/scipy
 
 * TODO: using genfromtxt - delimiter, names, etc.  automatically decompresses. 
 
@@ -266,7 +297,7 @@ Numpy expects numeric data.  Strings must be quoted.
 * TODO: working with aggregates of datasets (stacking tables from replicate runs)
 
 
-### Pandas
+## Pandas
 
 [Pandas](http://pandas.pydata.org) is a Python library designed to support data
 reading, writing, and manipulation.  Notably, Pandas also includes
@@ -298,7 +329,7 @@ which are gathered from the header in the CSV file:
 
 TODO
 
-#### Reading CSV
+### Reading CSV
 
 TODO: describe example
 
@@ -312,23 +343,10 @@ TODO: grouping
 
 
 
-## R and CSV files
-
-brief overview of R and CSV
-
-
-### Reading CSV files
-
-TODO
-
-
-### Writing CSV files
-
-TODO
 
 
 
-## CSV files and the Unix Shell
+# CSV files and the Unix Shell
 
 Although the Unix command line is a very intimidating place for many people, it
 contains many programs that can be used to manipulate CSV files very quickly
@@ -339,7 +357,7 @@ cookbook style, showing how to use commands to accomplish different tasks.  As
 shown in a few examples, the real power of the Unix shell is in connecting
 several of these commands to perform multiple operations at once.
 
-### Replacing Newlines
+## Replacing Newlines
 
 Before we begin, though, we need to first talk about *newlines*.  Although you
 normally don't see them, the end of each line in text files contains a newline
@@ -354,7 +372,7 @@ which was created on a Windows machine:
 
     dos2unix myfile.csv
 
-### Stripping Comments
+## Stripping Comments
 
 Some programs, such as Apple Numbers, do not support comments in CSV files.
 Fortunately, comments can very easily be stripped using the `grep` command.
@@ -372,7 +390,7 @@ In the Unix shell, the `>` character means to place the output of the previous
 command into the given file.  If a file already exists with that name, it will
 be replaced by the new one.
 
-### Removing Headers
+## Removing Headers
 
 Headers can also be easily removed. To remove the first line from the
 `luminescence.csv` file:
@@ -397,7 +415,7 @@ resulting data, and save the rest to a new file:
     cat luminescence.csv | grep -v ^# | sed "1 d" > luminescence-data.csv
 
 
-### Combining Multiple Files
+## Combining Multiple Files
 
 The `cat` program, which previously we've used to output the contents of a
 file, can be used to combine two or more files. To write add the contents of
@@ -424,8 +442,18 @@ Here, the contents of `data1.csv`, `data2.csv`, and `data3.csv` were combined
 and placed in a new file called `combined.csv`. Doing this while also stripping
 the headers from the files is a bit more complicated.
 
+Files can also be combined side-by-side, which is useful for adding columns
+from one file to another. This is accomplished with the `paste` command.  As an
+example, to add the data from `cols2.csv` to `cols1.csv` and save the results
+as `combined.csv`, the paste command is used as follows:
 
-### Extracting Specific Columns
+    paste -d , cols1.csv cols2.csv > combined.csv
+
+Here, `-d ,` specifies that a comma will be used to separate the contents of
+each row.
+
+
+## Extracting Specific Columns
 
 The `cut` command can be extrenely useful for extracting columns from a CSV
 file. For example, to extract the third column (Temperature) from
@@ -440,7 +468,7 @@ new file called `timetemp.csv`:
 
     cut -f 2,3 -d , luminescence.csv > timetemp.csv
 
-### Extracting Specific Rows
+## Extracting Specific Rows
 
 There are a number of ways in which specific rows can be extracted from CSV
 files. The `head` and `tail` commands output the first and last rows of a file,
