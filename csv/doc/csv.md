@@ -191,8 +191,9 @@ Enter.
 
 Unfortunately, Numbers does not provide any easy ways to transpose data.  The
 best plan for these situations would be to export the column-based data as a
-CSV file, read that file using the Python tools described in this Chapter, and
-transpose the data in Python with a function like *transpose* in NumPy.
+CSV file, read that file using the Python tools described later in this
+Chapter, and transpose the data in Python with a function like *transpose* in
+NumPy.
 
 
 # R and CSV files
@@ -213,21 +214,28 @@ TODO
 # Python and CSV files
 
 There are a number of different ways for interacting with CSV data in Python.
-All Python distributions include the csv module, described below, which allows
-for reading and writing CSV-formatted data. Additional modules such as numpy
-and Pandas also offer powerful tools for interacting with CSV-formatted
-datasets. This section introduces each of these tools.
+This section provides three such tools. The first is Python's `csv` module,
+which is included in all Python installations. The NumPy project, which
+provides a large collection of objects and functions for scientific computing,
+also includes functionality for working with CSV files. Finally, Pandas, a
+relatively new package aimed at providing tools for data analysis in python,
+also includes tools for reading and writing CSV data.
 
 ## Python's csv Module
 
+Python's `csv` module provides a number of objects that can be used to read and
+write CSV files. Although these objects are generally more bare bones than
+those described later in this section, they still make working with CSV files
+in Python very easy.
+
 ### Reading
-All Python installations include the `csv` module, which provides functionality
-for reading and writing CSV files. First, the following Python code opens and
-reads a CSV file named `platedata.csv`:
+
+First, the following Python code opens and reads a CSV file named
+`platedata.csv`:
 
     import csv
 
-    myreader = csv.reader(open('platedata.csv', 'r'))
+    myreader = csv.reader(open('luminescence.csv', 'r'))
 
 where `'r'` specifies that the file will be opened for reading. With this new
 object called `myreader`, we can now iterate through the contents of the CSV
@@ -238,13 +246,20 @@ file line-by-line:
 
 For each iteration of this loop, the `row` variable contains a list of values
 from that row.  Because Python's list indices are zero-based, the value in the
-second column of the current row is accessed as `row[1]`.
+second column of the current row is accessed as `row[1]`. This csv reader
+provides no functionality for dealing with headers, comments, or empty lines,
+so each `row` may contain header information, comments, data, or nothing. These
+shortcomings can be compensated for with additional code to check the beginning
+of the file and to look for the presence of the comment character.
 
-Python reads each row as a collection of string objects. To convert a value to
-a numeric value, the `int` and `float` functions can be used:
+Python reads each row as a collection of strings. To convert a value to a
+numeric value, the `int` and `float` functions can be used:
 
     for row in myreader:
         as_pct = float(row[2])/100
+
+As a precaution, `int` should only be used when your are sure that the row
+contains integers and not decmial numbers.
 
 If the values of all fields are numeric, they can all be converted at once:
 
@@ -253,18 +268,30 @@ If the values of all fields are numeric, they can all be converted at once:
 
 Here, `floatvals` will be a list containing the numeric values of each field.
 
-TODO: more
-TODO: handling comments
-TODO: handling headers
+With these readers, we can create lists of values from particular columns.  For
+example, to calculate the average luminescence for our data:
+
+    import csv
+
+    myreader = csv.reader(open('luminescence.csv', 'r'))
+    luminescence = []
+
+    for row in myreader:
+        luminescence.append(float(row[5]))
+
+    avg_luminescence = sum(luminescence)/len(luminescence)
+
+Using techniques like this, we can easily generate statics for or create plots
+of columns in a dataset.
 
 ### Writing
 
 The `csv` module also supports writing data to CSV files. To create an object
-that writes data to the file `platedata_modified.csv`:
+that writes data to the file `luminescence_modified.csv`:
 
     import csv
 
-    mywriter = csv.writer(open('platedata_modified.csv', 'w'))
+    mywriter = csv.writer(open('luminescence_modified.csv', 'w'))
 
 Where `'w'` specifies that we will be opening the file for writing. We can now
 write rows of data to the file using the `writerow` method:
@@ -272,12 +299,51 @@ write rows of data to the file using the `writerow` method:
     data = [0.2, 0.3, 1.4]
     mywriter.writerow(data)
 
-As a complete example, let's open `platedata.csv` for reading, read each row of
-numeric data, calculate the 
+As a complete example of using the `csv` module, let's use the
+`avida_reactions.csv` dataset, which contains the total number of times that
+each of nine reactions has been completed over the last 100 updates. For each
+record, we will add a new column that contains the total number of reactions
+completed in that period of time, and a column that indicates the change in
+reactions completed from the previous period of time. We will save the new
+dataset as `avida_reactions_modified.csv`.
 
+    import csv
+    import re
 
-* TODO: regular stuff
-* TODO: dict stuff
+    myreader = csv.reader(open('avida_reactions.csv', 'r'))
+    mywriter = csv.writer(open('avida_reactions_modified.csv', 'w'))
+
+    line_number = 0
+    prev_total = 0
+
+    for row in myreader:
+        if len(row) == 0:
+            continue        # skip empty rows
+
+        m = re.match("^\s*#", row[0])
+        if m:
+            continue        # skip comments
+
+        line_number += 1
+
+        if line_number == 1:
+            continue        # skip the header
+
+        new_row = map(float, row)
+
+        # Append the total number of tasks completed
+        # We skip the first column, because that contains the update
+        total = sum(new_row[1:])
+        new_row.append(total)
+
+        # Append the change in total tasks completed
+        new_row.append(total - prev_total)
+
+        prev_total = total
+
+        # Write the new row
+        mywriter.writerow(new_row)
+
 
 ## NumPy/scipy
 
@@ -291,7 +357,7 @@ Can use the unpack argument, which is helpful for plotting:
 
     (xvals, yvals) = np.genfromtxt('Tax_Year_2007_County_Income_Data.csv', delimiter=',', names=True, comments='#', usecols=(0,4), unpack=True)
 
-Numpy expects numeric data.  Strings must be quoted.
+NumPy expects numeric data.  Strings must be quoted.
 
 
 * TODO: working with aggregates of datasets (stacking tables from replicate runs)
