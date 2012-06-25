@@ -452,15 +452,12 @@ which are gathered from the header in the CSV file:
     print data['Temperature']
 
 
-TODO: describe example
-
 TODO: adding, deleting, and selecting rows
 
     sc = a['State Code']
     sc[sc < 3]
 
 TODO: grouping
-
 
 
 ### Writing CSV Files
