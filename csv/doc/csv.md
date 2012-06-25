@@ -411,6 +411,10 @@ By using options such as these and several others, `genfromtxt` makes reading
 CSV files extremely easy. Once loaded, NumPy and SciPy offer tremendous power
 for working with the resulting arrays.
 
+### Data Subsets and Selection
+
+TODO
+
 ### Writing CSV Files
 
 NumPy arrays can easily saved as CSV files using the `savetxt` function. For
@@ -451,13 +455,32 @@ which are gathered from the header in the CSV file:
 
     print data['Temperature']
 
+### Data Subsets and Selection
 
-TODO: adding, deleting, and selecting rows
+TODO: standard indexing stuff
 
-    sc = a['State Code']
-    sc[sc < 3]
+Subsets can also be selected based on some criteria. For example, we can find
+the records in our luminescence data where luminescence readings were greater
+than 40:
 
-TODO: grouping
+    data[data['Luminescence'] > 40]
+
+Multiple criteria can also be given. If we wanted to find the records for which
+luminescence was between 40 and 100, we could combine these criteria with an
+ampersand:
+
+    data[(data['Luminescence'] > 40) & (data['Luminescence'] < 100)]
+
+### Grouping
+
+Another extremely useful feature that Pandas provides is the ability to group
+data by a given column or columns. For example, the luminescence data could be
+grouped by wells (rows and columns) so that we could see how values changed
+over time:
+
+    bywells = data.group(['row', 'column'])
+
+TODO: finish this up
 
 
 ### Writing CSV Files
