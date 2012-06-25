@@ -41,6 +41,9 @@ organism for which the measurement was taken.
 To make datasets easier to understand, *metadata*, or additional information
 about the data, can be added through the use of *headers* and *comments*.  A
 header row is used to describe the data stored in each column of a dataset.
+Although there is no official specification, many software packages that
+support headers expect them to be on the first line of the file.
+
 Comments allow CSV files to contain additional notes about the data, such as a
 description of when and where the data were acquired, how the dataset was
 obtained, or any remarks about a specific data point.  Comments are identified
@@ -49,9 +52,10 @@ that all subsequent text on that line should be ignored.  For comments that
 span multiple lines, a comment character must be included at the beginning of
 each line.  The following dataset includes both headers and comments:
 
+    Temperature,Row,Column,Luminescence
     # Luminescence of evolved V. harveyi
     # Eric Bruger - 2012/06/27
-    Temperature,Row,Column,Luminescence
+
     26.3,0,0,7444.945
     26.3,0,1,4845.375
     26.3,0,2,4056.362
@@ -81,21 +85,22 @@ Temperature-Row-Column-Luminescence format.
 To handle replicates, we can add a new column for each entry that specifies the
 plate from which each data point were acquired.
 
+    Plate,Temperature,Row,Column,Luminescence
     # Luminescence of evolved V. harveyi
     # Eric Bruger - 2012/06/27
-    Plate,Temperature,Row,Column,Luminescence
-    Plate#1,26.3,0,0,7444.945
-    Plate#1,26.3,0,1,4845.375
-    Plate#1,26.3,0,2,4056.362
-    Plate#1,26.3,0,3,4883.137
-    Plate#1,26.3,0,4,3593.289
-    Plate#1,26.3,0,5,2645.281
-    Plate#2,30.0,0,0,5713.744
-    Plate#2,30.0,0,1,3491.94
-    Plate#2,30.0,0,2,2851.252
-    Plate#2,30.0,0,3,3872.232
-    Plate#2,30.0,0,4,2632.069
-    Plate#2,30.0,0,5,1594.228
+
+    Plate1,26.3,0,0,7444.945
+    Plate1,26.3,0,1,4845.375
+    Plate1,26.3,0,2,4056.362
+    Plate1,26.3,0,3,4883.137
+    Plate1,26.3,0,4,3593.289
+    Plate1,26.3,0,5,2645.281
+    Plate2,30.0,0,0,5713.744
+    Plate2,30.0,0,1,3491.94
+    Plate2,30.0,0,2,2851.252
+    Plate2,30.0,0,3,3872.232
+    Plate2,30.0,0,4,2632.069
+    Plate2,30.0,0,5,1594.228
 
 ## Working with Time Series Data
 
@@ -103,28 +108,30 @@ Similarly, time series can be thought of as measurements replicated over time.
 To augment our data set to show multiple reads of the plates over time, we can
 simply add a column that indicates when the measurement was taken:
 
+    Plate,Time,Temperature,Row,Column,Luminescence
     # Luminescence of evolved V. harveyi
     # Eric Bruger - 2012/06/27
-    Plate,Time,Temperature,Row,Column,Luminescence
-    Plate#1,0:00,26.3,0,0,7444.945
-    Plate#1,0:00,26.3,0,1,4845.375
-    Plate#1,15:00,30.1,0,0,6088.0
-    Plate#1,15:00,30.1,0,1,3976.694
-    Plate#1,30:00,30.0,0,0,6563.678
-    Plate#1,30:00,30.0,0,1,4188.048
-    Plate#2,0:00,30.0,0,0,6716.929
-    Plate#2,0:00,30.0,0,1,4153.633
-    Plate#2,15:00,30.0,0,0,6672.662
-    Plate#2,15:00,30.0,0,1,4167.991
-    Plate#2,30:00,30.0,0,0,5810.844
-    Plate#2,30:00,30.0,0,1,3652.258
+
+    Plate1,0:00,26.3,0,0,7444.945
+    Plate1,0:00,26.3,0,1,4845.375
+    Plate1,15:00,30.1,0,0,6088.0
+    Plate1,15:00,30.1,0,1,3976.694
+    Plate1,30:00,30.0,0,0,6563.678
+    Plate1,30:00,30.0,0,1,4188.048
+    Plate2,0:00,30.0,0,0,6716.929
+    Plate2,0:00,30.0,0,1,4153.633
+    Plate2,15:00,30.0,0,0,6672.662
+    Plate2,15:00,30.0,0,1,4167.991
+    Plate2,30:00,30.0,0,0,5810.844
+    Plate2,30:00,30.0,0,1,3652.258
 
 As another example, the data below show reaction counts in one Avida population
 over 1,000 updates for one population:
 
+    Update,NOT,NAND,AND,ORN,OR,ANDN,NOR,XOR,EQU
     # Reaction counts
     # Brian Connelly - 2012/03/03
-    Update,NOT,NAND,AND,ORN,OR,ANDN,NOR,XOR,EQU
+
     98000.0,172.0,2.0,33.0,35.0,2167.0,1007.0,4377.0,0.0,0.0
     98100.0,195.0,4.0,40.0,28.0,2185.0,1085.0,4408.0,0.0,0.0
     98200.0,191.0,2.0,37.0,31.0,2147.0,1004.0,4278.0,0.0,0.0
@@ -213,20 +220,20 @@ TODO
 
 # Python and CSV files
 
-There are a number of different ways for interacting with CSV data in Python.
-This section provides three such tools. The first is Python's `csv` module,
+This section introduces three ways in which CSV files are commonly read,
+manipulated, and written using Python.  The first is Python's `csv` module,
 which is included in all Python installations. The NumPy project, which
 provides a large collection of objects and functions for scientific computing,
-also includes functionality for working with CSV files. Finally, Pandas, a
-relatively new package aimed at providing tools for data analysis in python,
-also includes tools for reading and writing CSV data.
+also includes functionality for working with CSV files. Finally, we introduce
+the CSV capabilities of Pandas, a package aimed at providing tools for data
+analysis in Python.
 
 ## Python's csv Module
 
 Python's `csv` module provides a number of objects that can be used to read and
 write CSV files. Although these objects are generally more bare bones than
 those described later in this section, they still make working with CSV files
-in Python very easy.
+in Python quite easy.
 
 ### Reading
 
@@ -259,7 +266,7 @@ numeric value, the `int` and `float` functions can be used:
         as_pct = float(row[2])/100
 
 As a precaution, `int` should only be used when your are sure that the row
-contains integers and not decmial numbers.
+contains integers and not decimal numbers.
 
 If the values of all fields are numeric, they can all be converted at once:
 
@@ -345,22 +352,75 @@ dataset as `avida_reactions_modified.csv`.
         mywriter.writerow(new_row)
 
 
-## NumPy/scipy
+## Working with CSVs in NumPy
 
-* TODO: using genfromtxt - delimiter, names, etc.  automatically decompresses. 
+Although Python's `csv` module makes it fairly easy to read and write CSV
+files, it requires a lot of code to do common tasks like deal with headers,
+strip comments, and extract data from columns.
 
-    d = np.genfromtxt('Tax_Year_2007_County_Income_Data.csv', delimiter=',', names=True, comments='#', usecols=(0,1,3,4))
+[NumPy](http://numpy.scipy.org/) is a frequently-used package for scientific
+computing in Python. Although it is not included with the Python distribution,
+it is easy to install on most platforms. NumPy and the related
+[SciPy](http://www.scipy.org/) package provide a large collection of powerful
+tools for working with collections of data. Because these tools are based
+around the use of arrays of data, they are particularly well-suited for working
+with CSV data.
 
-    np.mean(d['State_Code'])
+### Reading CSV Files
 
-Can use the unpack argument, which is helpful for plotting:
+One of the most powerful methods for reading CSV files is the `genfromtxt`
+function, which is demonstrated below:
 
-    (xvals, yvals) = np.genfromtxt('Tax_Year_2007_County_Income_Data.csv', delimiter=',', names=True, comments='#', usecols=(0,4), unpack=True)
+    import numpy as np
 
-NumPy expects numeric data.  Strings must be quoted.
+    mydata = np.genfromtxt('luminescence.csv', delimiter=',', comments='#')
 
+This command will read from `luminescence.csv`, expecting fields to be
+delimited by commas and comments to begin with the # character. Like most
+tools, it expects the header to be the first row of the file, although this can
+be relaxed a bit by the optional `skip_header` argument, which specifies the
+number of lines to skip at the beginning of the file. It is also important to
+note that the comment character can not appear in a record, even as part of a
+string.
 
-* TODO: working with aggregates of datasets (stacking tables from replicate runs)
+The resulting `mydata` will be an array containing a row for each record in the
+dataset and a column for each field. Using indices, we can then obtain
+specific rows, columns, or cells:
+
+    col3 = mydata[:,3]      # Extract the fourth column (NumPy arrays are 0-based)
+
+    row500 = mydata[499,:]  # Extract the 500th row
+
+    value = mydata[1299, 4] # Get the value of the 5th element of the 1300th row
+
+NumPy arrays contain only numeric data, so the values associated text fields
+will be `nan`. To limit the columns included in the array, the optional
+`usecols` argument can be used, which specifies a list of columns to be used:
+
+    mydata = np.genfromtxt('luminescence.csv', delimiter=',', comments='#', usecols=(2,3,4,5))
+
+Sometimes, it is easier to indicate a column by name rather than number. This
+can be done using the `names` argument, which allows columns to be referred to
+by the name set in the header. The following example uses this to quickly
+calculate the average luminescence of the dataset:
+
+    mydata = np.genfromtxt('luminescence.csv', delimiter=',', comments='#', names=True)
+    avg_luminescence = np.mean(mydata['Luminescence'])
+
+By using options such as these and several others, `genfromtxt` makes reading
+CSV files extremely easy. Once loaded, NumPy and SciPy offer tremendous power
+for working with the resulting arrays.
+
+### Writing CSV Files
+
+NumPy arrays can easily saved as CSV files using the `savetxt` function. For
+example, to save the data stored in the `platedata` array to the file
+`platedata.csv`:
+
+    np.savetxt('platedata.csv', platedata, delimiter=',')
+
+`savetxt` does not provide a way to write a header row, so this can be done
+afterwards using a text editor.
 
 
 ## Pandas
@@ -553,9 +613,9 @@ lines 50 through 97:
 
 Often, though, we want to extract rows based on specific criteria. For these
 queries, the `grep` command can be used, which searches a file for a particular
-pattern. Using `grep`, we can extract all data from Plate#2:
+pattern. Using `grep`, we can extract all data from Plate2:
 
-    grep "Plate#2" luminescence.csv
+    grep "Plate2" luminescence.csv
 
 `grep` can support much more complex searches using *regular expressions*.
 Many good references for regular expressions can be found online.

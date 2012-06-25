@@ -1,6 +1,7 @@
+Update,NOT,NAND,AND,EPS,OR,ANDN,NOR,XOR,EQU
 # Reaction counts - Low resource environment
 # Brian Connelly - 2011/12/15
-Update,NOT,NAND,AND,EPS,OR,ANDN,NOR,XOR,EQU
+
 100.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 200.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 300.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
