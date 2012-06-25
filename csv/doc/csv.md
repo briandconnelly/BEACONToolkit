@@ -426,36 +426,31 @@ afterwards using a text editor.
 ## Pandas
 
 [Pandas](http://pandas.pydata.org) is a Python library designed to support data
-reading, writing, and manipulation.  Notably, Pandas also includes
-functionality for working with time series data.
+reading, writing, and manipulation. In Pandas, data are organized in
+*DataFrame* objects much like those used in R. Pandas is a fairly new project,
+so it is changing very rapidly. However, it already contains a number of
+features that make it a powerful tool for reading, writing, and working with
+CSV data.
 
-Pandas provides a nice interface for interacting with CSV files. Similar to R,
-when a CSV file is read with Pandas, the data are stored in a `DataFrame` object.
+### Reading CSV Files
+
+Like NumPy, Pandas provides a fully-featured function for reading CSV files.
+When a file is read with Pandas' `read_csv` function, data are stored in a
+*DataFrame* object.
 
     import pandas as p
-    data = p.read_csv("Tax_Year_2007_County_Income_Data.csv", header=0)
+    data = p.read_csv('luminescence.csv', header=0, comment='#')
 
-    print data
-
-This code will produce the following output:
-
-    Read Well   OD595
-    0      1   A1  0.3501
-    1      1   A2  0.3526
-    2      1   A3  0.3514
-    3      1   A4  0.3489
-    4      1   A5  0.3487
-    5      1   A6  0.3804
-    ...
+In the above example, the `comment` argument indicates that all text following
+the `#` character is skipped.  Pandas currently does not support line comments,
+so it is best to strip commented lines from files before reading. Otherwise,
+line comments produce empty records in the DataFrame.
 
 Individual columns in this `data` DataFrame can be accessed using their names,
 which are gathered from the header in the CSV file:
 
-    print data['OD595']
+    print data['Temperature']
 
-TODO
-
-### Reading CSV
 
 TODO: describe example
 
@@ -468,8 +463,14 @@ TODO: grouping
 
 
 
+### Writing CSV Files
 
+A DataFrame can be written to a CSV file using the `to_csv` function, as shown below:
 
+    data.to_csv('modified_data.csv')
+
+By default, the a header row is created, and commas are used as separators.
+Additionally, the frame number is included in the first column of every row.
 
 
 # CSV files and the Unix Shell
