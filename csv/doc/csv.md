@@ -38,10 +38,10 @@ organism for which the measurement was taken.
 
 ## Annotating CSV Files
 
-To aid in understanding a dataset, *metadata*, or additional information about
-the data, can be added through the use of *headers* and *comments*.  A header
-row is used to describe the data stored in each column of a dataset.  Comments
-allow CSV files to contain additional notes about the data, such as a
+To make datasets easier to understand, *metadata*, or additional information
+about the data, can be added through the use of *headers* and *comments*.  A
+header row is used to describe the data stored in each column of a dataset.
+Comments allow CSV files to contain additional notes about the data, such as a
 description of when and where the data were acquired, how the dataset was
 obtained, or any remarks about a specific data point.  Comments are identified
 by a single character, typically `#`, at the beginning of a line, and specify
@@ -76,7 +76,7 @@ plates. Since these data describe the same thing, it makes sense for them to be
 stored in the same file.  However, if we just added these data to the end of
 file, it would not be possible to differentiate between the data for row 0,
 column 0 of the one plate and any other plate if we keep with the
-Temperature-Row-Column-Luminescene format.
+Temperature-Row-Column-Luminescence format.
 
 To handle replicates, we can add a new column for each entry that specifies the
 plate from which each data point were acquired.
@@ -301,7 +301,7 @@ Numpy expects numeric data.  Strings must be quoted.
 
 [Pandas](http://pandas.pydata.org) is a Python library designed to support data
 reading, writing, and manipulation.  Notably, Pandas also includes
-functionality for working with timeseries data.
+functionality for working with time series data.
 
 Pandas provides a nice interface for interacting with CSV files. Similar to R,
 when a CSV file is read with Pandas, the data are stored in a `DataFrame` object.
@@ -455,7 +455,7 @@ each row.
 
 ## Extracting Specific Columns
 
-The `cut` command can be extrenely useful for extracting columns from a CSV
+The `cut` command can be extremely useful for extracting columns from a CSV
 file. For example, to extract the third column (Temperature) from
 `luminescence.csv`:
 
