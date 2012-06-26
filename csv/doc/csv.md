@@ -205,10 +205,14 @@ NumPy.
 
 # R and CSV files
 
-brief overview of R and CSV
+TODO
 
 
 ## Reading CSV files
+
+TODO
+
+## Data Subsets and Selection
 
 TODO
 
@@ -507,19 +511,18 @@ ampersand:
 
 Another extremely useful feature that Pandas provides is the ability to group
 data by a given column or columns. For example, the luminescence data could be
-grouped by wells (rows and columns) so that we could see how values changed
-over time:
+grouped by wells (rows and columns) so that we could see the average
+luminescence of each well over time:
 
     bywells = data.groupby(['Row', 'Column'])
-
-TODO: finish this up
-
     bywells['Luminescence'].mean()
-    data.groupby(['Row', 'Column'])['Luminescence'].mean()
 
-    bywells.aggregate(np.mean)
-    bywells.agg([np.sum, np.mean, np.std])
+Similarly, multiple functions can be applied to the grouped data using the
+`aggregate` function. This could be used to find the sum, mean, and standard
+deviation of the luminescence values in each well using the `sum`, `mean`, and
+`std` functions in NumPy:
 
+    bywells['Luminescence'].aggregate([np.sum, np.mean, np.std])
 
 
 ### Writing CSV Files
