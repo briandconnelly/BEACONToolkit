@@ -7,6 +7,7 @@ and ecology.
 ## Contributors
 * [Brian Connelly](http://www.bconnelly.net)
 * [Luis Zaman](http://www.luiszaman.com)
+* [Randy Olson](http://randalolson.com)
 
 ## License
 
