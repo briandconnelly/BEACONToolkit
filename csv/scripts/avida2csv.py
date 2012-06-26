@@ -18,13 +18,24 @@ __status__ = "Production"
 
 
 def avida2csv():
-    parser = argparse.ArgumentParser(description='Convert Avida output files to CSV format', version='{v}'.format(v=__version__))
-    parser.add_argument('-i', '--infile', type=argparse.FileType('rb'), default=sys.stdin, help='input file (default: stdin)')
-    parser.add_argument('-o', '--outfile', nargs='?', type=argparse.FileType('w'), default=sys.stdout, help='output file (default: stdout)')
-    parser.add_argument('--header', action='store_true', default=False, help='include a header row in the output')
+    parser = argparse.ArgumentParser(description='Convert Avida output files to CSV format',
+                                     version='{v}'.format(v=__version__))
+
+    parser.add_argument('-c', '--comments', dest='comment_char', default='#',
+                        metavar='C',
+                        help='character to be used for comments (default #)')
+    parser.add_argument('-d', '--delimiter', dest='delimiter', default=',',
+                        metavar='D', help='delimiter (default ,)')
+    parser.add_argument('-H', '--noheader', dest='header', action='store_false',
+                        default=True, help='do not write header information')
+    parser.add_argument('-i', '--infile', type=argparse.FileType('rb'),
+                        default=sys.stdin,
+                        help='input file (default: stdin)')
+    parser.add_argument('-o', '--outfile', nargs='?', type=argparse.FileType('w'),
+                        default=sys.stdout, help='output file (default: stdout)')
     cmd_args = parser.parse_args()
 
-    w = csv.writer(cmd_args.outfile)
+    w = csv.writer(cmd_args.outfile, delimiter=cmd_args.delimiter)
 
     header = []
 
