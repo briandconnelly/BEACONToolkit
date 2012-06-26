@@ -1,4 +1,4 @@
-Working with CSV Datasets
+#Working with CSV Datasets
 
 Comma-separated value (CSV) files store data, both numeric and text, as plain
 text. Because of this, CSV files provide two main benefits: they can be opened
@@ -9,9 +9,9 @@ example, Dryad, the online data repository for data underlying peer-reviewed
 publications, prefers the use of plain-text formats such as CSV. As the use of
 such public repositories is increasingly required by journals such as
 Evolution, Molecular Ecology, and American Naturalist, developing a workflow
-using CSV files can greatly facilitate this process.
+using CSV files can greatly facilitate the publishing process.
 
-# Structure of CSV Files
+## Structure of CSV Files
 
 While there is no official structure to CSV files, there is a common format
 often followed when dealing with data. In particular, data should be organized
@@ -205,21 +205,90 @@ NumPy.
 
 # R and CSV files
 
-TODO
+Excel is a great tool for creating CSV files and for doing quick analyses, but often using another tool built specifically for data manipulation and analysis will prove useful. Using R (or Python) for your data needs has many advantages including the ability to save analysis scripts so they can be applied to new or different datasets easily, and a large open-source community constantly contributing new packages. The R language is particularly well suited for data anlysis since it was originally written by statisticians, and they still make up a large userbase. 
 
 
 ## Reading CSV files
 
-TODO
+Since data is so central to R, dealing with CSV files is remarkably well incorporated into to the language's base functionality. The most common way to read CSVs, and the one we will use here is `read.csv`. You can see  the R help page for this function by typing `?read.csv` as well as some information about other functions you can use to import data.
+
+First, we should tell R which directory we'll be working in so it knows where to load files from. We can do that with the `setwd` function:
+    
+    setwd('~/BEACONToolkit/csv/data')
+	
+Don't worry too much about the `~/` in the path, it is a Unix way of addressing relative directories. If you're using Windows, you may run into a few gotchas with directories. The easiest way to get around all of them is to always use full paths (i.e., ignoring the `~/`) and always forward slashes instead of backslashes. For example, if your data was located in `C:\MyFiles\BEACONToolkit\csv\data` you should instead type:
+    
+    setwd('C:/MyFiles/BEACONToolkit/csv/data')
+
+Now that we have set R's working directory, we can ask R what files are in there using the `list.files` function. R is not meant to be a repleacement for the terminal or file browser, but this quick way of viewing the contects of a directory is helpful when you forget the exact name of the file you want to load. If we run this function with our working directory set to the `BEACONToolkit/csv/data` directory, we should see our two example datasets:
+
+    list.files()
+	
+    # output
+    [1] "avida_reactions.csv" "luminescence.csv" 
+
+We can now import this data using the `read.csv` function. Calling this function will return a `data.frame` object, which is R's way of internally representing tabular data. We want to store this dataframe in a variable so we can use it over and over without having to load the data every time. To do this in R, we simply run the following command:
+
+    lum_data <- read.csv('luminescence.csv')
+
+But if we take a look at this data, we can see there is a problem. The `head` function will list the first few rows of a dataset, and is often usful to always run just to make sure there were no problems importing the data. Running `summary` will give you some statistical summaries of the data, which is good for making sure the min and max values of your data make sense, and to see if there are any missing values. We can run these two functions, passing lum_data as a parameter (i.e., `head(lum_data)` or `summary(lum_data)`). Another way of looking at the data is using the `edit` function. We will talk more about this function in the Writing CSV files section. 
+
+    head(lum_data)
+	
+	# output
+	                                 Plate        Time Temperature Row Column Luminescence
+	1 # Luminescence of evolved V. harveyi                      NA  NA     NA           NA
+	2           # Eric Bruger - 2012/06/27                      NA  NA     NA           NA
+	3                               Plate1 00:00:00:00        26.3   0      0     7444.945
+	4                               Plate1 00:00:00:00        26.3   0      1     4845.375
+	5                               Plate1 00:00:00:00        26.3   0      2     4056.362
+	6                               Plate1 00:00:00:00        26.3   0      3     4883.137
+ 
+It looks like R thinks the comments are actually entries, and tried to fit them into the dataframe. R does support comments in CSV files, but by default the `read.csv` function isn't expecting them. Instead, we can be a little more explicit with our call to `read.csv`:
+
+    lum_data <- read.csv('luminescence.csv', header=TRUE, sep=',', comment.char='#')
+
+The `header` and `sep` parameters, which let you specify if the data contains a header row and the delimiter using to seperate entries, are working correctly by default, but now you see how easily they can be modified. Now if we take a look at our data, it is correctly being imported by R.
+
+    head(lum_data)
+	
+	# output
+	   Plate        Time Temperature Row Column Luminescence
+	1 Plate1 00:00:00:00        26.3   0      0     7444.945
+	2 Plate1 00:00:00:00        26.3   0      1     4845.375
+	3 Plate1 00:00:00:00        26.3   0      2     4056.362
+	4 Plate1 00:00:00:00        26.3   0      3     4883.137
+	5 Plate1 00:00:00:00        26.3   0      4     3593.289
+	6 Plate1 00:00:00:00        26.3   0      5     2645.281
+
+
 
 ## Data Subsets and Selection
 
-TODO
+Now that we have our dataframe, we can start pulling out data and manipulating it using R. The simplest way to access data is by pulling out an entire column. In R, we can access particular columns using the `$` operator, which extracts data from objects. To pull out the Luminescence column from our dataset, we simply run:
+
+    lum_data$Luminescence
+
+Another way we can access data is by indexing into the dataframe, which is the same as indexing into a matrix in R. That means we can pull out particular rows or columns using the `data.frame[row,column]` notation. For example, to pull out the Luminescence column (column 6) we could also run:
+
+    lum_data[,6]
+
+Leaving the `row` spot blank tells R to return all of the rows from column 6. We could also ask for particular rows instead of columns by specifying the `row` but not the `column`, and even ask for a single value by specifying both. R also lets you pass vectors into the indecies. For example, maybe we wanted both Time and Luminescence (columns 2 and 6) but didn't care about the rest. We could run the following function, which would return a new `data.frame` object with only Time and Luminescence as columns:
+
+    lum_data[, c(2,6)]
+
+The `c` function is short for *combine*, which just creates a vector out of the passed in values. Allowing vectors as indexing arguments is very powerful and lets us use indexing as a way to subset the data more flexibly. Perhaps we were only interested in the data where Luminescence was at least 500,000 units. By asking R to only return columns that meet the criteria `lum_data$Luminescence >= 500000`, we can get a new dataframe containing a subset of our original data. Under the hood, this is actually creating a *masking vector* where each position is either TRUE if Luminescence is greater than 500,000 or FALSE otherwise, and then returns only rows corrosponding to TRUE values. 
+
+    lum_data[lum_data$Luminescence >= 500000, ]
+	
+If we were only interested in particularly luminous data points from the first row, we can add another logic statement to further subset the dataframe:
+
+    lum_data[lum_data$Luminescence >= 500000 & lum_data$Row == 1, ] 
 
 
 ## Writing CSV files
 
-TODO
+Because most of R revolves around `data.frame` objects, it is very simple to write new CSV files. Often it will be useful to programmatically add columns or rows to data, and doing so with an R script lets you easily re-create your changes should they be lost, apply them to future data sets, as well as have a record of exactly how you changed your data. 
 
 
 # Python and CSV files
@@ -241,8 +310,8 @@ in Python quite easy.
 
 ### Reading
 
-First, the following Python code opens and reads a CSV file named
-`platedata.csv`:
+First, the following Python code opens and reads a CSV file named 
+`luminescence.csv`:
 
     import csv
 
