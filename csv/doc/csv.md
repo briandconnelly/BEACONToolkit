@@ -413,7 +413,41 @@ for working with the resulting arrays.
 
 ### Data Subsets and Selection
 
-TODO
+We've already seen how to extract individual columns, rows, and elements using
+indices. Indices can also be used to find subsets of data that match certain
+criteria. For example, to find all records where the temperature (the third
+column) of the reading is greater than 30:
+
+    hitemp = mydata[mydata[:,2] > 30]
+
+`mydata[:,2] > 30` returns a list containing `True` and `False` values
+indicating whether or not the criterion is met. By using this list to index the
+dataset, we find the entries for which the condition is satisfied. Subsets are
+a very powerful way to look at different pieces of the dataset.
+
+We've already seen how specific rows, columns, and elements can be addressed
+when using indices. The process is similar when using named columns:
+
+    mydata['Temperature']   # The temperature column of data
+
+    mydata['Temperature'][4] # The temperature in the 5th row of data
+
+Named columns can be very useful for selecting subsets.  The process of
+specifying criteria is the same as with indices. To get all readings from the
+luminescence data when the temperature was above 30 using column names:
+
+    hitemp = mydata[mydata['Temperature'] > 30]
+
+For multiple criteria, two steps are usually required. Let's say we want to
+find all of the readings from the luminescence data for wells on the fourth row
+where the temperature was above 30:
+
+    condition = (mydata['Row'] == 3) & (mydata['Temperature'] > 30)
+    row_hitemp = mydata[condition]
+
+Multiple criteria can be specified this way using both indices and named
+columns. In both cases criteria to be specified using `<`, `<=`, `==`, `>=`,
+and `>`.
 
 ### Writing CSV Files
 
@@ -457,11 +491,9 @@ which are gathered from the header in the CSV file:
 
 ### Data Subsets and Selection
 
-TODO: standard indexing stuff
-
-Subsets can also be selected based on some criteria. For example, we can find
-the records in our luminescence data where luminescence readings were greater
-than 40:
+Similar to NumPy, subsets can also be selected based on some criteria. For
+example, we can find the records in our luminescence data where luminescence
+readings were greater than 40:
 
     data[data['Luminescence'] > 40]
 
@@ -478,9 +510,16 @@ data by a given column or columns. For example, the luminescence data could be
 grouped by wells (rows and columns) so that we could see how values changed
 over time:
 
-    bywells = data.group(['row', 'column'])
+    bywells = data.groupby(['Row', 'Column'])
 
 TODO: finish this up
+
+    bywells['Luminescence'].mean()
+    data.groupby(['Row', 'Column'])['Luminescence'].mean()
+
+    bywells.aggregate(np.mean)
+    bywells.agg([np.sum, np.mean, np.std])
+
 
 
 ### Writing CSV Files
