@@ -1,8 +1,10 @@
+\RequirePackage[l2tabu,orthodox]{nag}
+
 \usepackage{graphicx}
-\usepackage{listings}
 \usepackage{hyperref}
 \usepackage[english]{babel}
-
+\usepackage{booktabs}
+\usepackage{listings}
 \usepackage{color}
 \definecolor{codebg}{rgb}{0.93,0.93,0.93}
 \definecolor{dkgreen}{rgb}{0,0.6,0}
@@ -35,3 +37,7 @@
     escapeinside={\%*}{*)},            % if you want to add a comment within your code
     morekeywords={*,...}               % if you want to add more keywords to the set
 }
+
+% Add some nice microtype tweaks.  These improve the look
+% of the right edge of text quite a bit
+\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
