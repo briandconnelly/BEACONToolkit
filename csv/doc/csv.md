@@ -1,5 +1,3 @@
-#Working with CSV Datasets
-
 Comma-separated value (CSV) files store data, both numeric and text, as plain
 text. Because of this, CSV files provide two main benefits: they can be opened
 using a wide variety of software, including free and open-source software, and
@@ -11,7 +9,7 @@ such public repositories is increasingly required by journals such as
 Evolution, Molecular Ecology, and American Naturalist, developing a workflow
 using CSV files can greatly facilitate the publishing process.
 
-## Structure of CSV Files
+# Structure of CSV Files
 
 While there is no official structure to CSV files, there is a common format
 often followed when dealing with data. In particular, data should be organized
@@ -36,7 +34,7 @@ aspect of whatever is being recorded in the dataset.  In the example data
 above, the first element in each record represents the phenotype of the
 organism for which the measurement was taken.
 
-## Annotating CSV Files
+# Annotating CSV Files
 
 To make datasets easier to understand, *metadata*, or additional information
 about the data, can be added through the use of *headers* and *comments*.  A
@@ -72,7 +70,7 @@ with several common tools available on the Unix command line, which will be
 introduced later in this chapter. Alternately, thee metadata can be removed
 manually or with a script.
 
-## Including Replicates
+# Including Replicates
 
 In most cases, data sets will contain measurements from multiple replicates.
 For example, the luminescence data might contain data from reads of multiple
@@ -102,7 +100,7 @@ plate from which each data point were acquired.
     Plate2,30.0,0,4,2632.069
     Plate2,30.0,0,5,1594.228
 
-## Working with Time Series Data
+# Working with Time Series Data
 
 Similarly, time series can be thought of as measurements replicated over time.
 To augment our data set to show multiple reads of the plates over time, we can
