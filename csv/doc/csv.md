@@ -648,14 +648,16 @@ NumPy arrays contain only numeric data, so the values associated text fields
 will be `nan`. To limit the columns included in the array, the optional
 `usecols` argument can be used, which specifies a list of columns to be used:
 
-    mydata = np.genfromtxt('luminescence.csv', delimiter=',', comments='#', usecols=(2,3,4,5))
+    mydata = np.genfromtxt('luminescence.csv', delimiter=',', comments='#',
+                           usecols=(2,3,4,5))
 
 Sometimes, it is easier to indicate a column by name rather than number. This
 can be done using the `names` argument, which allows columns to be referred to
 by the name set in the header. The following example uses this to quickly
 calculate the average luminescence of the dataset:
 
-    mydata = np.genfromtxt('luminescence.csv', delimiter=',', comments='#', names=True)
+    mydata = np.genfromtxt('luminescence.csv', delimiter=',', comments='#',
+                           names=True)
     avg_luminescence = np.mean(mydata['Luminescence'])
 
 By using options such as these and several others, `genfromtxt` makes reading
