@@ -624,7 +624,8 @@ function, which is demonstrated below:
 
     import numpy as np
 
-    mydata = np.genfromtxt('luminescence.csv', delimiter=',', comments='#')
+    mydata = np.genfromtxt('luminescence.csv', delimiter=',',
+                           comments='#')
 
 This command will read from `luminescence.csv`, expecting fields to be
 delimited by commas and comments to begin with the # character. Like most
@@ -638,26 +639,26 @@ The resulting `mydata` will be an array containing a row for each record in the
 dataset and a column for each field. Using indices, we can then obtain
 specific rows, columns, or cells:
 
-    col3 = mydata[:,3]      # Extract the fourth column (NumPy arrays are 0-based)
+    col3 = mydata[:,3]      # Extract the fourth column
 
     row500 = mydata[499,:]  # Extract the 500th row
 
-    value = mydata[1299, 4] # Get the value of the 5th element of the 1300th row
+    value = mydata[1299, 4] # Get the value of the 5th element of row 1300
 
 NumPy arrays contain only numeric data, so the values associated text fields
 will be `nan`. To limit the columns included in the array, the optional
 `usecols` argument can be used, which specifies a list of columns to be used:
 
-    mydata = np.genfromtxt('luminescence.csv', delimiter=',', comments='#',
-                           usecols=(2,3,4,5))
+    mydata = np.genfromtxt('luminescence.csv', delimiter=',',
+                           comments='#', usecols=(2,3,4,5))
 
 Sometimes, it is easier to indicate a column by name rather than number. This
 can be done using the `names` argument, which allows columns to be referred to
 by the name set in the header. The following example uses this to quickly
 calculate the average luminescence of the dataset:
 
-    mydata = np.genfromtxt('luminescence.csv', delimiter=',', comments='#',
-                           names=True)
+    mydata = np.genfromtxt('luminescence.csv', delimiter=',',
+                           comments='#', names=True)
     avg_luminescence = np.mean(mydata['Luminescence'])
 
 By using options such as these and several others, `genfromtxt` makes reading
