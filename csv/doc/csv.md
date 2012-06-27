@@ -206,8 +206,8 @@ NumPy.
 Excel is a great tool for creating CSV files and for doing quick analyses, but
 often using another tool built specifically for data manipulation and analysis
 will prove useful. Using R (or Python) for your data needs has many advantages
-including the ability to save analysis scripts so they can be applied to new
-or different datasets easily, and a large open-source community constantly
+including the ability to save analysis scripts so they can be applied to new or
+different datasets easily, and a large open-source community constantly
 contributing new packages. The R language is particularly well suited for data
 analysis since it was originally written by statisticians, and they still make
 up a large user-base. 
@@ -226,18 +226,18 @@ to load files from. We can do that with the `setwd` function:
     
     setwd('~/BEACONToolkit/csv/data')
 	
-Don't worry too much about the `~/` in the path, it is a Unix way of
-addressing relative directories. If you're using Windows, you may run into a
-few gotchas with directories. The easiest way to get around all of them is to
-always use full paths (i.e., ignoring the `~/`) and always use forward slashes
-instead of backslashes. For example, if your data was located in
+Don't worry too much about the `~/` in the path, it is a Unix way of addressing
+relative directories. If you're using Windows, you may run into a few gotchas
+with directories. The easiest way to get around all of them is to always use
+full paths (i.e., ignoring the `~/`) and always use forward slashes instead of
+backslashes. For example, if your data was located in
 `C:\MyFiles\BEACONToolkit\csv\data` you should instead type:
     
     setwd('C:/MyFiles/BEACONToolkit/csv/data')
 
 Now that we have set R's working directory, we can ask R what files are in
-there using the `list.files` function. R is not meant to be a repleacement for
-the terminal or file browser, but this quick way of viewing the contects of a
+there using the `list.files` function. R is not meant to be a replacement for
+the terminal or file browser, but this quick way of viewing the contents of a
 directory is helpful when you forget the exact name of the file you want to
 load. If we run this function with our working directory set to the
 `BEACONToolkit/csv/data` directory, we should see our two example datasets:
@@ -250,20 +250,21 @@ load. If we run this function with our working directory set to the
 We can now import this data using the `read.csv` function. Calling this
 function will return a `data.frame` object, which is R's way of internally
 representing tabular data. We want to store this dataframe in a variable so we
-can use it over and over without having to load the data every time. To do
-this in R, we simply run the following command:
+can use it over and over without having to load the data every time. To do this
+in R, we simply run the following command:
 
     lum_data <- read.csv('luminescence.csv')
 
 But if we take a look at this data, we can see there is a problem. The `head`
-function will list the first few rows of a dataset, and it is often good practice 
-to always run this just to make sure there were no problems importing the data.
-Running `summary` will give you some statistical summaries of the data, which
-is good for making sure the min and max values of your data make sense, and to
-see if there are any missing values. We can run these two functions, passing 
-lum_data as a parameter (i.e., `head(lum_data)` or `summary(lum_data)`). 
-Another way of looking at the data is using the `edit` function. We will talk 
-more about this function in the Writing CSV files section. 
+function will list the first few rows of a dataset, and it is often good
+practice to always run this just to make sure there were no problems importing
+the data.  Running `summary` will give you some statistical summaries of the
+data, which is good for making sure the min and max values of your data make
+sense, and to see if there are any missing values. We can run these two
+functions, passing lum_data as a parameter (i.e., `head(lum_data)` or
+`summary(lum_data)`).  Another way of looking at the data is using the `edit`
+function. We will talk more about this function in the Writing CSV files
+section. 
 
     head(lum_data)
 	
@@ -276,17 +277,17 @@ more about this function in the Writing CSV files section.
 	5                               Plate1 00:00:00:00        26.3   0      2     4056.362
 	6                               Plate1 00:00:00:00        26.3   0      3     4883.137
  
-It looks like R thinks the comments are actually entries, and tried to fit 
-them into the dataframe. R does support comments in CSV files, but by default 
-the `read.csv` function isn't expecting them. Instead, we can be a little more 
+It looks like R thinks the comments are actually entries, and tried to fit them
+into the dataframe. R does support comments in CSV files, but by default the
+`read.csv` function isn't expecting them. Instead, we can be a little more
 explicit with our call to `read.csv`:
 
     lum_data <- read.csv('luminescence.csv', header=TRUE, sep=',', comment.char='#')
 
-The `header` and `sep` parameters, which let you specify if the data contains 
-a header row and the delimiter used to separate entries, are working 
-correctly by default, but now you see how easily they can be modified. Now if 
-we take another look at our data, it is correctly being imported by R.
+The `header` and `sep` parameters, which let you specify if the data contains a
+header row and the delimiter used to separate entries, are working correctly by
+default, but now you see how easily they can be modified. Now if we take
+another look at our data, it is correctly being imported by R.
 
     head(lum_data)
 	
@@ -303,45 +304,44 @@ we take another look at our data, it is correctly being imported by R.
 
 ## Data Subsets and Selection
 
-Now that we have our dataframe, we can start pulling out data and manipulating 
-it using R. The simplest way to access data is by pulling out an entire 
-column. In R, we can access particular columns using the `$` operator, which 
-extracts data from objects. To pull out the Luminescence column from our 
-dataset, we simply run:
+Now that we have our dataframe, we can start pulling out data and manipulating
+it using R. The simplest way to access data is by pulling out an entire column.
+In R, we can access particular columns using the `$` operator, which extracts
+data from objects. To pull out the Luminescence column from our dataset, we
+simply run:
 
     lum_data$Luminescence
 
-Another way we can access data is by indexing into the dataframe, which is the 
-same as indexing into a matrix in R. That means we can pull out particular 
-rows or columns using the `data.frame[row,column]` notation. For example, to 
-pull out the Luminescence column (column 6) we could also run:
+Another way we can access data is by indexing into the dataframe, which is the
+same as indexing into a matrix in R. That means we can pull out particular rows
+or columns using the `data.frame[row,column]` notation. For example, to pull
+out the Luminescence column (column 6) we could also run:
 
     lum_data[,6]
 
-Leaving the `row` spot blank tells R to return all of the rows from column 6. 
-We could also ask for particular rows instead of columns by specifying the 
-`row` but not the `column`, and even ask for a single value by specifying 
-both. R also lets you pass vectors into the indecies. For example, maybe we 
-wanted both Time and Luminescence (columns 2 and 6) but didn't care about the 
-rest. We could run the following function, which would return a new 
-`data.frame` object with only Time and Luminescence as columns:
+Leaving the `row` spot blank tells R to return all of the rows from column 6.
+We could also ask for particular rows instead of columns by specifying the
+`row` but not the `column`, and even ask for a single value by specifying both.
+R also lets you pass vectors into the indices. For example, maybe we wanted
+both Time and Luminescence (columns 2 and 6) but didn't care about the rest. We
+could run the following function, which would return a new `data.frame` object
+with only Time and Luminescence as columns:
 
     lum_data[, c(2,6)]
 
-The `c` function is short for *combine*, which just creates a vector out of 
-the passed in values. Allowing vectors as indexing arguments is very powerful 
-and lets us use indexing as a way to subset the data more flexibly. Perhaps we 
-were only interested in the data where Luminescence was at least 500,000 
-units. By asking R to only return columns that meet the criteria 
-`lum_data$Luminescence >= 500000`, we can get a new dataframe containing a 
-subset of our original data. Under the hood, this is actually creating a 
-*masking vector* where each position is either TRUE if Luminescence is greater 
-than 500,000 or FALSE otherwise, and then returns only rows corrosponding to 
-TRUE values. 
+The `c` function is short for *combine*, which just creates a vector out of the
+passed in values. Allowing vectors as indexing arguments is very powerful and
+lets us use indexing as a way to subset the data more flexibly. Perhaps we were
+only interested in the data where Luminescence was at least 500,000 units. By
+asking R to only return columns that meet the criteria `lum_data$Luminescence
+>= 500000`, we can get a new dataframe containing a subset of our original
+data. Under the hood, this is actually creating a *masking vector* where each
+position is either TRUE if Luminescence is greater than 500,000 or FALSE
+otherwise, and then returns only rows corresponding to TRUE values. 
 
     lum_data[lum_data$Luminescence >= 500000, ]
 	
-If we were only interested in particularly luminous data points from the first 
+If we were only interested in particularly luminous data points from the first
 row, we can add another logic statement to further subset the dataframe:
 
     lum_data[lum_data$Luminescence >= 500000 & lum_data$Row == 1, ] 
@@ -349,62 +349,62 @@ row, we can add another logic statement to further subset the dataframe:
 
 ## Writing CSV files
 
-Because most of R revolves around `data.frame` objects, it is very simple to 
-write new CSV files. Often it will be useful to programmatically add columns 
-or rows to data, and doing so with an R script lets you easily re-create your 
-changes should they be lost, apply them to future data sets, as well as have a 
+Because most of R revolves around `data.frame` objects, it is very simple to
+write new CSV files. Often it will be useful to programmatically add columns or
+rows to data, and doing so with an R script lets you easily re-create your
+changes should they be lost, apply them to future data sets, as well as have a
 record of exactly how you changed your data. 
 
-To facilitate adding rows and columns to `data.frame` objects, the script 
-located in `BEACONToolkit/csv/scripts/addRowColumn.R` has two 
-helper-functions: `add_row` and `add_column`
+To facilitate adding rows and columns to `data.frame` objects, the script
+located in `BEACONToolkit/csv/scripts/addRowColumn.R` has two helper-functions:
+`add_row` and `add_column`
 
-`add_row` takes a dataframe and the vector of values to add. This function 
-will return a new `data.frame` object instead of changing the state of the one 
-passed in, and also makes sure the vector is the same length as the rest of 
-the data.
+`add_row` takes a dataframe and the vector of values to add. This function will
+return a new `data.frame` object instead of changing the state of the one
+passed in, and also makes sure the vector is the same length as the rest of the
+data.
 
-`add_column` takes a dataframe, the vector of values to populate this column, 
-and the name of the new column. Again, this function returns a new 
-`data.frame` object, and makes sure the length of the vector passed in matches 
-the number of entries in the data.
+`add_column` takes a dataframe, the vector of values to populate this column,
+and the name of the new column. Again, this function returns a new `data.frame`
+object, and makes sure the length of the vector passed in matches the number of
+entries in the data.
 
-Another way to add data to a dataframe is to use the `edit` function, which 
-will open a workbook style graphical interface populated with data. From this 
-interface you can add new rows or columns, and update data. This is also a 
-good way to double check how R has imported your data. For example, if we run 
+Another way to add data to a dataframe is to use the `edit` function, which
+will open a workbook style graphical interface populated with data. From this
+interface you can add new rows or columns, and update data. This is also a good
+way to double check how R has imported your data. For example, if we run
 `edit(lum_data)` we will see the following window:
 
 ![Editor Window in R](https://github.com/briandconnelly/BEACONToolkit/raw/master/csv/doc/figures/R_editor_window.png)
 	
-From this window, it is possible to add new rows above or below selected rows, 
-add columns, and remove columns from your data. When you close the window, the 
-modified `data.frame` object is returned. This means that if you plan on 
+From this window, it is possible to add new rows above or below selected rows,
+add columns, and remove columns from your data. When you close the window, the
+modified `data.frame` object is returned. This means that if you plan on
 modifying the data, you should save the return value.
 
     new_data <- edit(lum_data)
 
-Then, `new_data` will contain the modified data after you are done editing 
-this dataframe. If you forget to assign the return value to a variable before 
-making many changes, you can still access the `data.frame` that was modified. 
-R has a special variable name for the last returned object: `.Last.value`. So, 
-if you modified some data but forgot to assign it to a variable and don't want 
-to start over, you can retreive it.
+Then, `new_data` will contain the modified data after you are done editing this
+dataframe. If you forget to assign the return value to a variable before making
+many changes, you can still access the `data.frame` that was modified.  R has a
+special variable name for the last returned object: `.Last.value`. So, if you
+modified some data but forgot to assign it to a variable and don't want to
+start over, you can retrieve it.
 
     edit(lum_data)
-	# Oh no! I didn't save the return!
+	# Oh no! I didn't save the edited dataset!
 	
 	new_data <- .Last.value
 	# phew!
 
-Now that you know how to make simple modifications to a dataframe, we can save 
-these modifications using the `write.csv` function. There are many options you 
-can pass to this function, and you can read about them by typing `?write.csv` 
+Now that you know how to make simple modifications to a dataframe, we can save
+these modifications using the `write.csv` function. There are many options you
+can pass to this function, and you can read about them by typing `?write.csv`
 in R. The default options will work fine for us:
 
     write.csv(new_data, 'new_luminescence.csv')
 
-Now if we asked R what files are in our working directory, we should see our 
+Now if we asked R what files are in our working directory, we should see our
 new file. 
 
     list.files()
@@ -412,18 +412,18 @@ new file.
 	# output
     [1] "avida_reactions.csv"  "luminescence.csv"     "new_luminescence.csv"
 
-One powerful feature of R is its ability to aggregate your data in various 
-ways to produce new dataframes that can, for example, summarize treatments. 
-Let's pretend that in our data set, each Row is a different treatment, and 
-instead of having all the data we just want the mean luminescence over time 
-for each treatment. We can use R to aggregate this data for us, and return a 
-new dataframe:
+One powerful feature of R is its ability to aggregate your data in various ways
+to produce new dataframes that can, for example, summarize treatments.  Let's
+pretend that in our data set, each Row is a different treatment, and instead of
+having all the data we just want the mean luminescence over time for each
+treatment. We can use R to aggregate this data for us, and return a new
+dataframe:
 
     aggregate(Luminescence ~ Row*Time, FUN=mean, data=lum_data)
 
-The `~` is defining an instance of a function class in R, and saying that both 
-Row and Time are the covariates. `FUN` is the function that is run on the 
-aggregated data, and the return value(s) are used to create the new returned 
+The `~` is defining an instance of a function class in R, and saying that both
+Row and Time are the covariates. `FUN` is the function that is run on the
+aggregated data, and the return value(s) are used to create the new returned
 dataframe. In this case, it looks something like this:
 
         Row     Time Luminescence
@@ -434,14 +434,14 @@ dataframe. In this case, it looks something like this:
     5     4 00:00:00  821691.5639
     6     5 00:00:00  784647.5340
 
-We can also tell R to do more complicated functions on our data. Maybe instead 
+We can also tell R to do more complicated functions on our data. Maybe instead
 of just the mean, we'd also like the standard deviation of each Row as well. 
 
     aggregate(Luminescence ~ Row*Time, data=lum_data, FUN=function(vals) { j <- c(mean(vals), sd(vals)); names(j) <- c("mean", "sd"); return(j); })
 
-Here, instead of passing in a base R function, we've defined our own (on one 
-line) that returns both the mean and standard deviations, as well as names the 
-return values so we get readable columns. Using this function, now our data 
+Here, instead of passing in a base R function, we've defined our own (on one
+line) that returns both the mean and standard deviations, as well as names the
+return values so we get readable columns. Using this function, now our data
 will look like this:
 
 
@@ -453,8 +453,8 @@ will look like this:
 	5     4 00:00:00       821691.5639     671004.0727
 	6     5 00:00:00       784647.5340     635719.0337
 
-So, combining all of our steps, we could write a script that takes our 
-luminescence data, aggregates and summarizes it, and write this new dataframe 
+So, combining all of our steps, we could write a script that takes our
+luminescence data, aggregates and summarizes it, and write this new dataframe
 to a csv file we can send to colleagues or save for future analysis. 
 
     # load our CSV
