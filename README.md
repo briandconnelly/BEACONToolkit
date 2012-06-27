@@ -9,6 +9,9 @@ and ecology.
 * [Luis Zaman](http://www.luiszaman.com)
 * [Randy Olson](http://randalolson.com)
 
+## Sections
+* Working with CSV datasets (Excel, R, Python)
+
 ## License
 
 The BEACON Toolkit is released under the [Apache License, Version
