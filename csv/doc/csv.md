@@ -500,7 +500,7 @@ object called `myreader`, we can now iterate through the contents of the CSV
 file line-by-line:
 
     for row in myreader:
-        print "Read a row:", row
+        print 'Read a row:', row
 
 For each iteration of this loop, the `row` variable contains a list of values
 from that row.  Because Python's list indices are zero-based, the value in the
@@ -578,7 +578,7 @@ dataset as `avida_reactions_modified.csv`.
         if len(row) == 0:
             continue        # skip empty rows
 
-        m = re.match("^\s*#", row[0])
+        m = re.match('^\s*#', row[0])
         if m:
             continue        # skip comments
 
