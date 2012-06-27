@@ -209,14 +209,15 @@ will prove useful. Using R (or Python) for your data needs has many advantages
 including the ability to save analysis scripts so they can be applied to new
 or different datasets easily, and a large open-source community constantly
 contributing new packages. The R language is particularly well suited for data
-anlysis since it was originally written by statisticians, and they still make up a large userbase. 
+analysis since it was originally written by statisticians, and they still make
+up a large user-base. 
 
 
 ## Reading CSV files
 
 Since data is so central to R, dealing with CSV files is remarkably well
 incorporated into to the language's base functionality. The most common way to
-read CSVs, and the one we will use here is `read.csv`. You can see  the R help
+read CSVs, and the one we will use here is `read.csv`. You can see the R help
 page for this function by typing `?read.csv` as well as some information about
 other functions you can use to import data.
 
@@ -228,7 +229,7 @@ to load files from. We can do that with the `setwd` function:
 Don't worry too much about the `~/` in the path, it is a Unix way of
 addressing relative directories. If you're using Windows, you may run into a
 few gotchas with directories. The easiest way to get around all of them is to
-always use full paths (i.e., ignoring the `~/`) and always forward slashes
+always use full paths (i.e., ignoring the `~/`) and always use forward slashes
 instead of backslashes. For example, if your data was located in
 `C:\MyFiles\BEACONToolkit\csv\data` you should instead type:
     
@@ -255,8 +256,8 @@ this in R, we simply run the following command:
     lum_data <- read.csv('luminescence.csv')
 
 But if we take a look at this data, we can see there is a problem. The `head`
-function will list the first few rows of a dataset, and is often usful to
-always run just to make sure there were no problems importing the data.
+function will list the first few rows of a dataset, and it is often good practice 
+to always run this just to make sure there were no problems importing the data.
 Running `summary` will give you some statistical summaries of the data, which
 is good for making sure the min and max values of your data make sense, and to
 see if there are any missing values. We can run these two functions, passing 
@@ -283,9 +284,9 @@ explicit with our call to `read.csv`:
     lum_data <- read.csv('luminescence.csv', header=TRUE, sep=',', comment.char='#')
 
 The `header` and `sep` parameters, which let you specify if the data contains 
-a header row and the delimiter using to seperate entries, are working 
+a header row and the delimiter used to separate entries, are working 
 correctly by default, but now you see how easily they can be modified. Now if 
-we take a look at our data, it is correctly being imported by R.
+we take another look at our data, it is correctly being imported by R.
 
     head(lum_data)
 	
