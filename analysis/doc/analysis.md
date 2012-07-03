@@ -212,3 +212,41 @@ Generally, bootstrapped 95% confidence intervals provide more accurate confidenc
 intervals than 95% confidence intervals computed from the S.E.M.
 
 ## Python's pandas Module
+
+The pandas module provides powerful, efficient, R-like DataFrame objects capable of
+calculating statistics en masse on the entire DataFrame. DataFrames are very useful
+for when you need to compute statistics over multiple replicate runs.
+
+For the purposes of this tutorial, `experimentDF` shall be assigned by the following
+Python code:
+
+	from pandas import *
+	import glob
+	
+	experimentList = []
+  	
+  	# read all of the csv files into a list of DataFrames
+    for datafile in glob.glob("../data/*.csv"):
+  
+        experimentList.append(read_csv(datafile))
+    
+    # concatenate all of the DataFrames together, then group data by column
+    experimentDF = (concat(experimentList, axis=1, keys=range(len(dataLists[key])))
+            		.swaplevel(0, 1, axis=1)
+            		.sortlevel(axis=1)
+            		.groupby(level=0, axis=1)
+
+### Mean
+
+
+
+### Variance
+
+
+
+### Standard error of the mean
+
+
+
+### NumPy/SciPy methods on pandas DataFrames
+
