@@ -74,8 +74,8 @@ experiments significantly differ or not:
 
 	import numpy as np
 
-	experiment1 = np.rand(1, 30)
-	experiment2 = np.rand(1, 30)
+	experiment1 = np.random.rand(1, 30)
+	experiment2 = np.random.rand(1, 30)
 
 A quick RankSum test will provide a P value indicating whether or not the two
 distributions are the same.
@@ -98,9 +98,9 @@ significantly different.
 
 	import numpy as np
 
-	experiment1 = np.rand(1, 30)
-	experiment2 = np.rand(1, 30)
-	experiment3 = np.rand(1, 30)
+	experiment1 = np.random.rand(1, 30)
+	experiment2 = np.random.rand(1, 30)
+	experiment3 = np.random.rand(1, 30)
 
 	from scipy import stats
 	
@@ -191,7 +191,7 @@ Bootstrapping 95% confidence intervals around the mean with this function is sim
 	import scipy
 	import numpy as np
 
-	experiment1 = np.rand(1, 10)
+	experiment1 = np.random.rand(1, 10)
 
 	CIs = ci(experiment1, scipy.mean)
 	
@@ -217,8 +217,8 @@ The pandas module provides powerful, efficient, R-like DataFrame objects capable
 calculating statistics en masse on the entire DataFrame. DataFrames are very useful
 for when you need to compute statistics over multiple replicate runs.
 
-For the purposes of this tutorial, `experimentDF` shall be assigned by the following
-Python code:
+For the purposes of this tutorial, `experimentList` and `experimentDF` shall be assigned
+by the following Python code:
 
 	from pandas import *
 	import glob
@@ -226,11 +226,12 @@ Python code:
 	experimentList = []
   	
   	# read all of the csv files into a list of DataFrames
-    for datafile in glob.glob("../data/*.csv"):
+    for datafile in glob.glob("*.csv"):
   
         experimentList.append(read_csv(datafile))
     
-    # concatenate all of the DataFrames together, then group data by column
+    # concatenate all of the DataFrames together into a single DataFrame,
+    # then group the data by columns
     experimentDF = (concat(experimentList, axis=1, keys=range(len(dataLists[key])))
             		.swaplevel(0, 1, axis=1)
             		.sortlevel(axis=1)
@@ -238,15 +239,49 @@ Python code:
 
 ### Mean
 
+Conveniently, DataFrames have all kinds of built-in functions to perform standard
+operations on them en masse: `add()`, `sub()`, `mul()`, `div()`, `mean()`, `std()`, etc.
+The full list is located at: http://pandas.sourceforge.net/generated/pandas.DataFrame.html
 
+Thus, computing the mean of an entire DataFrame only takes one line of code:
+
+	from pandas import *
+
+	meanDF = experimentDF.mean()
 
 ### Variance
 
+Computing the variance is similarly easy:
 
+	from pandas import *
 
-### Standard error of the mean
+	varianceDF = experimentDF.var()
 
+### Standard Error of the Mean (S.E.M.)
 
+Since DataFrames don't have a built-in S.E.M. function, you have to compute it yourself:
+
+	from pandas import *
+	
+	# standard error = standard deviation / sqrt(number of samples)
+	standardDeviationDF = experimentDF.std()
+	
+	numSamples = len(experimentList)
+	
+	standardErrorDF = standardDeviationDF.div( sqrt(numSamples) )
+	
+	# 95% confidence interval around the mean = 1.96 * standard error
+	confidenceIntervalDF = standardErrorDF.mul(1.96)
 
 ### NumPy/SciPy methods on pandas DataFrames
 
+Finally, NumPy and SciPy methods can be applied directly to pandas DataFrames with the
+`aggregate()` function.
+
+	import numpy as np
+
+	meanDF = experimentDF.aggregate(np.mean)
+	
+	varianceDF = experimentDF.aggregate(np.var)
+	
+	# etc.
