@@ -1,13 +1,15 @@
-# Statistical Analysis in Python
+
+
+## Statistical Analysis in Python
 
 In this section, we introduce a few useful methods for analyzing your data in Python.
-Namely, we cover how to compute the mean, variance, and standard error of a dataset.
+Namely, we cover how to compute the mean, variance, and standard error from a dataset.
 For more advanced statistical analysis, we cover how to perform a
 Mann-Whitney-Wilcoxon (MWW) RankSum test, how to perform an Analysis of variance (ANOVA)
-between multiple datasets, and how to compute bootstrapped 95% confidence intervals for
-non-normally distributed datasets.
+between multiple distributions, and how to compute bootstrapped 95% confidence
+intervals for non-normally distributed data.
 
-## Python's SciPy Module
+### Python's SciPy Module
 
 The majority of data analysis in Python can be performed with the SciPy module. SciPy
 provides a plethora of statistical functions and tests that will handle the majority of
@@ -24,7 +26,7 @@ runs of an Avida experiment. For the purposes of those following along with the 
 
 	dataset_list = np.random.normal(20, 5, 30)
 
-### Mean
+#### Mean
 
 The mean performance of an experiment gives a good idea of how the experiment will
 turn out *on average* under a given treatment.
@@ -35,7 +37,7 @@ turn out *on average* under a given treatment.
 	
 	print "Dataset mean: ", dataset_mean
 
-### Variance
+#### Variance
 
 The variance in the performance provides a measurement of how consistent the results
 of an experiment are. The lower the variance, the more consistent the results are, and
@@ -47,11 +49,10 @@ vice versa.
 	
 	print "Variance around the mean: ", dataset_variance
 
-### Standard Error of the Mean (S.E.M.)
+#### Standard Error of the Mean (S.E.M.)
 
 Combined with the mean, the S.E.M. enables you to establish a range around a mean that
-the majority of any future replicate experiments will most likely fall within. A general
-rule of thumb is to have at least 30 replicate runs to compute a reliable S.E.M.
+the majority of any future replicate experiments will most likely fall within. 
 
 	import scipy
 
@@ -59,15 +60,17 @@ rule of thumb is to have at least 30 replicate runs to compute a reliable S.E.M.
 	
 	print "Standard error of the mean: ", dataset_stderr
 
-A single S.E.M. will envelop 68% of the possible replicate means; two S.E.M.s (1.96, to
-be precise) envelop 95% of the possible replicate means. Thus, two S.E.M.s are also
-called the "estimated 95% confidence interval."
+A single S.E.M. will usually envelop 68% of the possible replicate means
+and two S.E.M.s envelop 95% of the possible replicate means. Two
+S.E.M.s are called the "estimated 95% confidence interval." The confidence
+interval is estimated because the exact width depend on how many replicates
+you have; this approximation is good when you have more than 20 replicates.
 
-### Mann-Whitney-Wilcoxon (MWW) RankSum test
+#### Mann-Whitney-Wilcoxon (MWW) RankSum test
 
-The MWW RankSum test is a useful test to determine if two datasets are significantly
-different or not. Unlike the t-test, the RankSum test does not assume that the datasets
-are normally distributed, thus providing a more accurate assessment of the datasets.
+The MWW RankSum test is a useful test to determine if two distributions are significantly
+different or not. Unlike the t-test, the RankSum test does not assume that the data
+are normally distributed, potentially providing a more accurate assessment of the datasets.
 
 As an example, let's say we want to determine if the results of the two following
 experiments significantly differ or not:
@@ -86,10 +89,10 @@ distributions are the same.
 	
 	print "MWW RankSum P = ", p_val
 	
-If P <= 0.05, we are highly confident that the distributions significantly differ, and
+If P <= 0.05, we are confident that the distributions significantly differ, and
 can claim that the treatment has a significant impact on the measured value.
 
-### One-way analysis of variance (ANOVA)
+#### One-way analysis of variance (ANOVA)
 
 If you need to compare more than two datasets at a time, an ANOVA is your best bet. For
 example, we have the results from three experiments with overlapping 95% confidence
@@ -108,12 +111,12 @@ significantly different.
 	
 	print "One-way ANOVA P = ", p_val
 	
-If P > 0.05, we can claim with high confidence that the means of the results of all three
+If P > 0.05, we can claim with confidence that the means of the results of all three
 experiments are not significantly different.
 
-### Bootstrapped 95% confidence intervals
+#### Bootstrapped 95% confidence intervals
 
-Oftentimes in wet lab research, it's difficult to perform the 30 replicate runs
+Oftentimes it's difficult to perform the 20+ replicate runs
 recommended for computing reliable confidence intervals with S.E.M. In this case,
 bootstrapping the confidence intervals is a much more accurate method of determining
 the 95% confidence interval around your experiment's mean performance.
@@ -211,7 +214,7 @@ are taken from:
 Generally, bootstrapped 95% confidence intervals provide more accurate confidence
 intervals than 95% confidence intervals computed from the S.E.M.
 
-## Python's pandas Module
+### Python's pandas Module
 
 The pandas module provides powerful, efficient, R-like DataFrame objects capable of
 calculating statistics en masse on the entire DataFrame. DataFrames are very useful
@@ -237,7 +240,7 @@ by the following Python code:
             		.sortlevel(axis=1)
             		.groupby(level=0, axis=1)
 
-### Mean
+#### Mean
 
 Conveniently, DataFrames have all kinds of built-in functions to perform standard
 operations on them en masse: `add()`, `sub()`, `mul()`, `div()`, `mean()`, `std()`, etc.
@@ -249,7 +252,7 @@ Thus, computing the mean of an entire DataFrame only takes one line of code:
 
 	meanDF = experimentDF.mean()
 
-### Variance
+#### Variance
 
 Computing the variance is similarly easy:
 
@@ -257,7 +260,7 @@ Computing the variance is similarly easy:
 
 	varianceDF = experimentDF.var()
 
-### Standard Error of the Mean (S.E.M.)
+#### Standard Error of the Mean (S.E.M.)
 
 Since DataFrames don't have a built-in S.E.M. function, you have to compute it yourself:
 
@@ -273,7 +276,7 @@ Since DataFrames don't have a built-in S.E.M. function, you have to compute it y
 	# 95% confidence interval around the mean = 1.96 * standard error
 	confidenceIntervalDF = standardErrorDF.mul(1.96)
 
-### NumPy/SciPy methods on pandas DataFrames
+#### NumPy/SciPy methods on pandas DataFrames
 
 Finally, NumPy and SciPy methods can be applied directly to pandas DataFrames with the
 `aggregate()` function.
