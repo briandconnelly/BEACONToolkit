@@ -1,4 +1,13 @@
+## Some Preliminary Thoughts
 
+Before we can get into analyzing data with computational tools, we first need to
+understand a few basics about probability and statistics. Let's take a totally 
+fictitious example of fish. Maybe we expect a particular species of fish to have
+evolved larger bodies in cold environments but not hot ones. We can start by 
+looking at the distributions of weight between samples of fish caught in these 
+two different environments.
+
+![Weight Boxplots](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_boxplot.png)
 
 ## Statistical Analysis in Python
 
