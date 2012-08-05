@@ -1,4 +1,6 @@
-## Some Preliminary Thoughts
+## Some Preliminary Thoughts (in R)
+
+### What p-values aren't
 
 Before we can get into analyzing data with computational tools, we first need to
 understand a few basics about probability and statistics. Let's take a totally 
@@ -7,7 +9,86 @@ evolved larger bodies in cold environments but not hot ones. We can start by
 looking at the distributions of weight between samples of fish caught in these 
 two different environments.
 
-![Weight Boxplots](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_boxplot.png)
+	cold_fish = rnorm(5000, mean=20.5, sd=5)
+	hot_fish = rnorm(5000, mean=20, sd=5)
+	
+![Weight Boxplots](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_boxplot.pdf)
+
+While this isn't really the analysis I would suggest, it appears there is no
+difference between environments. Perhaps a slight increase in weight in cold
+environments, but no more than a single kilogram. But, it turns out that if we
+do a simple t-test our p-value is very small, less than 0.001.
+
+	t.test(a,b)
+	
+	#output
+	t = 4.0446, df = 9997.997, p-value = 5.281e-05
+
+The point I'm trying to illustrate here is that p-values, while often important
+for publication, tell you very little about what is actually important. In this 
+case, the p-value is so small because we have so many samples. The slight 
+difference is real and the p-value reflects that, but less than one kilogram 
+difference has no biological meaning. Instead of thinking primarily about
+p-values, you should think about effect sizes and what they mean for your 
+hypotheses. 
+
+### What p-values are
+
+So what does a p-value tell you then? The p-value is simply the probability of 
+observing as extreme data under the null hypothesis. The null hypothesis usually
+ends up being that the slope is 0, or the mean is 0, or the difference between 
+two samples is 0. We can demonstrate what exactly that means by computing the 
+p-value of a sample, with the null hypothesis that the true mean is equal to 
+zero, by resampling our data over and over again and counting the number of 
+times we observe a mean less than or equal to zero. This technique is called 
+bootstraping and sometimes more generally resampling. 
+
+![New Fake Distribution](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_hist.pdf)
+
+	cold_effects = rnorm(50, mean=1.0, sd=5)
+	
+Let's say this is the measured effect of cold temperature on bodyweight in some 
+other species of fish. We want to know if there is really a trend of colder
+temperatures and heavier fish. We can think about testing this by asking how
+often we would see as extreme a mean if the true mean was zero. This would
+require us to specify the distribution, and would be called a parametric 
+Monte Carlo test. However, another way to ask this question would be to ask how
+often we would observe a mean less than or equal to zero if we resampled from
+our data over and over again. This would be a resampling/bootstrap test.
+
+![Resampled Distributions](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/resamples.pdf)
+
+Just to illustrate a bit of the variation we get when resampling from our data
+over and over again, here are a few boxplots of individual resamplings. We can
+perform a single resampling event by calling the `sample` function, specifiying
+we want to sample with replacement by setting `replace=T`:
+
+	sample(cold_effects, size=length(a), replace=T)
+
+![Histogram of Resampled Means](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/sampling_means.pdf)
+
+And if we calculate the mean of these resampled distributions many many times, 
+we get what is known as the sampling distribution of means. We can repeate this 
+sampling process using the `replicate` function, here replicating it 100,000
+times.
+
+	sample_means <- replicate(100000, mean(sample(cold_effects, size=length(cold_effects), replace=T)))
+	
+Now we can ask how often, given our data, we see a mean that is equal or less than zero, we can get a p-value out of this resampling process! 
+
+	length(sample_means[sample_means <= 0])/num_samples
+	
+	#output
+	[1] 0.07355
+
+And we can compare this to the p-value given a normal one-tailed t-test:
+
+	t.test(cold_effects, alternative="greater")
+	
+	#output
+	t = 1.4379, df = 49, p-value = 0.07842
+	
+If you do these sort of resampling and bootstrap statistics often, you'll notice they are often the same as the parametric estimates. The power of these resampling and bootstrap statistics is in how easy they are to make and taylor to your specific hypotheses and data, not neccesariy in getting better or different results. 
 
 ## Statistical Analysis in Python
 
