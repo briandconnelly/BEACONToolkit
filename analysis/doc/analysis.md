@@ -12,7 +12,7 @@ two different environments.
 	cold_fish = rnorm(5000, mean=20.5, sd=5)
 	hot_fish = rnorm(5000, mean=20, sd=5)
 	
-![Weight Boxplots](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_boxplot.pdf)
+![Weight Boxplots](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_boxplot.png)
 
 While this isn't really the analysis I would suggest, it appears there is no
 difference between environments. Perhaps a slight increase in weight in cold
@@ -43,7 +43,7 @@ zero, by resampling our data over and over again and counting the number of
 times we observe a mean less than or equal to zero. This technique is called 
 bootstraping and sometimes more generally resampling. 
 
-![New Fake Distribution](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_hist.pdf)
+![New Fake Distribution](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_hist.png)
 
 	cold_effects = rnorm(50, mean=1.0, sd=5)
 	
@@ -56,7 +56,7 @@ Monte Carlo test. However, another way to ask this question would be to ask how
 often we would observe a mean less than or equal to zero if we resampled from
 our data over and over again. This would be a resampling/bootstrap test.
 
-![Resampled Distributions](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/resamples.pdf)
+![Resampled Distributions](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/resamples.png)
 
 Just to illustrate a bit of the variation we get when resampling from our data
 over and over again, here are a few boxplots of individual resamplings. We can
@@ -65,7 +65,7 @@ we want to sample with replacement by setting `replace=T`:
 
 	sample(cold_effects, size=length(a), replace=T)
 
-![Histogram of Resampled Means](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/sampling_means.pdf)
+![Histogram of Resampled Means](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/sampling_means.png)
 
 And if we calculate the mean of these resampled distributions many many times, 
 we get what is known as the sampling distribution of means. We can repeate this 
