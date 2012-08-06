@@ -41,13 +41,13 @@ two samples is 0. We can demonstrate what exactly that means by computing the
 p-value of a sample, with the null hypothesis that the true mean is equal to 
 zero, by resampling our data over and over again and counting the number of 
 times we observe a mean less than or equal to zero. This technique is called 
-bootstraping and sometimes more generally resampling. 
+bootstrapping and sometimes more generally resampling. 
 
 ![New Fake Distribution](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_hist.png)
 
 	cold_effects = rnorm(50, mean=1.0, sd=5)
 	
-Let's say this is the measured effect of cold temperature on bodyweight in some 
+Let's say this is the measured effect of cold temperature on body weight in some 
 other species of fish. We want to know if there is really a trend of colder
 temperatures and heavier fish. We can think about testing this by asking how
 often we would see as extreme a mean if the true mean was zero. This would
@@ -84,11 +84,11 @@ We can compare our simulated p-value to the t-test closed form solution and see 
 
 There is a lot of confusion about what 95% confidence intervals are. The most common interpretation is that they are where you expect the true mean to fall 95% of the time. Unfortunately, this is not exactly what they are. Instead, they tell you where your estimated mean will fall 95% of the time, if you were to replicate your experiment over and over again. Here we will quickly show you what this means, and how to bootstrap 95% confidence intervals for yourself. 
 
-Lets say we have a distribution, here `cold_effects` will serve as our data. The 95% confidence interval tells us if we were to go back out to the ocean and sample fish again thousands and thousands of times, where the mass of our estimated means would fall. We can think about this process as sampling from the underlying distribution over and over again, and while we don't have the underlying distribution, we do have an empirical one. With bootstraping and resampling techniques in general, we treat our empirical distribution as the underlying distribution and sample repeatedly from it. 
+Lets say we have a distribution, here `cold_effects` will serve as our data. The 95% confidence interval tells us if we were to go back out to the ocean and sample fish again thousands and thousands of times, where the mass of our estimated means would fall. We can think about this process as sampling from the underlying distribution over and over again, and while we don't have the underlying distribution, we do have an empirical one. With bootstrapping and resampling techniques in general, we treat our empirical distribution as the underlying distribution and sample repeatedly from it. 
 
 Just to illustrate a bit of the variation we get when resampling from our data
-over and over again, here are a few boxplots of individual resamplings. We can
-perform a single resampling event by calling the `sample` function, specifiying
+over and over again, here are a few box plots of individual resamplings. We can
+perform a single resampling event by calling the `sample` function, specifying
 we want to sample with replacement by setting `replace=T`:
 
 	sample(cold_effects, size=length(a), replace=T)
@@ -96,7 +96,7 @@ we want to sample with replacement by setting `replace=T`:
 ![Resampled Distributions](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/resamples.png)
 
 And if we calculate the mean of these resampled distributions many many times, 
-we get what is known as the sampling distribution of means. We can repeate this 
+we get what is known as the sampling distribution of means. We can repeat this 
 sampling process using the `replicate` function, here replicating it 100,000
 times.
 
@@ -104,7 +104,7 @@ times.
 	
 ![Sample Mean Distribution](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/sampling_means.png)
 
-We know that if we sample over and over again and calculate the mean, it will aproximate a normal distribution given enough samples. We also know that +/- 2 standard deviations of a normal distribution contain about 96% of the mass. So, using these two facts, we can estimate our confidence intervals as +/- 2 standard deviations of the sampling distribution. This is where, having resampled over and over again, the mean will end up about 95% of the time.
+We know that if we sample over and over again and calculate the mean, it will approximate a normal distribution given enough samples. We also know that +/- 2 standard deviations of a normal distribution contain about 96% of the mass. So, using these two facts, we can estimate our confidence intervals as +/- 2 standard deviations of the sampling distribution. This is where, having resampled over and over again, the mean will end up about 95% of the time.
 
 	c(mean(cold_effect) - 2 * sd(sample_means), mean(cold_effect) + 2 * sd(sample_means))
 	[1] 0.7933669 3.7101643
@@ -142,7 +142,7 @@ We use `na.omit` because there are some Virulence values that are NA, or not pre
 
 	no_parasites <- parasite_data[is.na(parasite_data$Virulence), ]
 
-We can make a boxplot of just these two distributions to get a sense of how parasites affect host diversity with parasites at 0.8 virulence.
+We can make a box plot of just these two distributions to get a sense of how parasites affect host diversity with parasites at 0.8 virulence.
 
 	boxplot(no_parasites$ShannonDiversity, normal_parasites$ShannonDiversity, ylab="Shannon Diversity", xlab="W and W.O. Parasites", main="Normal Parasite Runs (0.8 Virulence)")
 	
@@ -210,7 +210,7 @@ The `t.test` function also returned a p-value, but for the null hypothesis that 
 	
 This time the p-value is telling us the probability of observing as extreme a difference between distributions given the null hypothesis that they have the same mean, and it is very very small. But, as we argued earlier, the more important measure is the actual difference between treatments rather than the p-value. In this case, the means are quite different: 1.26 as compared to 0.25. Conveniently, the 95% confidence intervals that are returned from a two-sample t-test is giving us information about the uncertainty in the estimated difference between distributions. We can see the difference is pretty substantial in this case. 
 
-Now, if you remember back to the boxplot of diversities from runs without parasites, it didn't look very normally distributed. The median and lower quartile were squashed together close to zero. The t-test is parametric and makes the assumption that our data is normally distributed. While it is fairly robust to violations of that assumption, there are non-parametric tests designed to deal with data like these. In particular, the Wilcox Rank-Sum test, also known as the Mann-Whitney U Test, is a general non-parametric statistic. 
+Now, if you remember back to the box plot of diversities from runs without parasites, it didn't look very normally distributed. The median and lower quartile were squashed together close to zero. The t-test is parametric and makes the assumption that our data is normally distributed. While it is fairly robust to violations of that assumption, there are non-parametric tests designed to deal with data like these. In particular, the Wilcox Rank-Sum test, also known as the Mann-Whitney U Test, is a general non-parametric statistic. 
 
 	 wilcox.test(normal_parasites$ShannonDiversity, no_parasites$ShannonDiversity, conf.int=T)
 
