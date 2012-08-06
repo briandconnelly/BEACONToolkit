@@ -333,10 +333,10 @@ The `c` function is short for *combine*, which just creates a vector out of the
 passed in values. Allowing vectors as indexing arguments is very powerful and
 lets us use indexing as a way to subset the data more flexibly. Perhaps we were
 only interested in the data where Luminescence was at least 500,000 units. By
-asking R to only return columns that meet the criteria `lum_data$Luminescence
->= 500000`, we can get a new dataframe containing a subset of our original
-data. Under the hood, this is actually creating a *masking vector* where each
-position is either TRUE if Luminescence is greater than 500,000 or FALSE
+asking R to only return columns that meet the criteria 
+`lum_data$Luminescence >= 500000`, we can get a new dataframe containing a subset
+of our original data. Under the hood, this is actually creating a *masking vector*
+where each position is either TRUE if Luminescence is greater than 500,000 or FALSE
 otherwise, and then returns only rows corresponding to TRUE values. 
 
     lum_data[lum_data$Luminescence >= 500000, ]

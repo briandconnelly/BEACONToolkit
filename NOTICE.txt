@@ -2,7 +2,7 @@ SEEDS - Stochastic Ecological and Evolutionary Dynamics System
 
 Copyright 2012 BEACON Toolkit Contributers
 
-Contributers: Brian D. Connelly, Luis Zaman
+Contributers: Brian D. Connelly, Luis Zaman, Randal S. Olson
 
 Released under the Apache License, Version 2.0.  For more information, see
 LICENSE.txt

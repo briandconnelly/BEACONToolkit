@@ -7,10 +7,11 @@ and ecology.
 ## Contributors
 * [Brian Connelly](http://www.bconnelly.net)
 * [Luis Zaman](http://www.luiszaman.com)
-* [Randy Olson](http://randalolson.com)
+* [Randy Olson](http://www.randalolson.com)
 
 ## Sections
 * Working with CSV datasets (Excel, R, Python)
+* Statistical analysis (Excel, R, Python)
 
 ## License
 
