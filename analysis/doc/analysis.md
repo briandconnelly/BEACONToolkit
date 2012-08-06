@@ -49,19 +49,20 @@ zero. This technique is called *bootstrapping* or sometimes, more generally,
 ![New Fake Distribution](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_hist.png)
 
 
-Let's say we now have a data set of the measured effect of cold temperature on
+Let's say we also have a data set of the measured effect of cold temperature on
 body weight in some other species of fish.
 
-	cold_effects = rnorm(50, mean=1.0, sd=5)
+	cold_effect = rnorm(50, mean=1.0, sd=5)
 	
 We want to know if colder temperatures really do lead to heavier fish.  One way
 to test this would be to ask how often we would see these means in body
 temperature if the true mean was zero.  This would be called a parametric
-*Monte Carlo* test. To do this, we would need to specify In this case we know
-these data came from a normal distribution, so we could perform this test by
-looking at means from a set of random numbers drawn from this null distribution
-(with mean=0) and estimate the probability of observing a mean as extreme as
-the one we actually observed in `cold_effects`. 
+*Monte Carlo* test. To do this, we would need to specify a distribution for
+these temperature means to be drawn from.  In this case we know our data came
+from a normal distribution, so we could perform this test by looking at means
+from a set of random numbers drawn from this null distribution (with mean=0)
+and estimate the probability of observing a mean as extreme as the one we
+actually observed in `cold_effects`. 
 	
 	#first define how many samples we'll be doing -- the more the better
 	num_samples <- 100000
@@ -72,7 +73,7 @@ the one we actually observed in `cold_effects`.
 	#we can look at it
 	hist(monte_carlo_samples, main="Monte Carlo Simulated Means")
 
-	p_val <- length(monte_carlo_samples[monte_carlo_samples>= mean(cold_effect)])/length(monte_carlo_samples)
+	p_val <- length(monte_carlo_samples[monte_carlo_samples >= mean(cold_effect)])/length(monte_carlo_samples)
 	print(paste("p-value = ", p_val))
 	
 	#output
@@ -92,12 +93,15 @@ they are quite similar.
 
 ### What 95% confidence intervals are
 
-There is a lot of confusion about what 95% confidence intervals are. The most
-common interpretation is that they are where you expect the true mean to fall
-95% of the time. Unfortunately, this is not exactly what they are. Instead,
-they tell you where your estimated mean will fall 95% of the time, if you were
-to replicate your experiment over and over again. Here we will quickly show you
-what this means, and how to bootstrap 95% confidence intervals for yourself. 
+Another frequently-used statistic is the 95% confidence interval. Along with
+p-values, there is often a lot of confusion about what 95% confidence intervals
+are.  The most common interpretation is that they are the range of values where
+you expect the true mean to fall 95% of the time. Unfortunately, this is not
+exactly what they are.  Instead, they tell you where your *estimated mean* will
+fall 95% of the time if you were to replicate your experiment over and over
+again. In this section, we will quickly show you what this means and how you
+can begin using bootstrapping to estimate 95% confidence intervals for your
+data sets. 
 
 Lets say we have a distribution, here `cold_effects` will serve as our data.
 The 95% confidence interval tells us if we were to go back out to the ocean and
