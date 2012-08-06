@@ -124,7 +124,7 @@ We can make a boxplot of just these two distributions to get a sense of how para
 
 	boxplot(no_parasites$ShannonDiversity, normal_parasites$ShannonDiversity, ylab="Shannon Diversity", xlab="W and W.O. Parasites", main="Normal Parasite Runs (0.8 Virulence)")
 	
-![Diversity With and Without Parasites](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/normal_parasites.png.png)
+![Diversity With and Without Parasites](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/normal_parasites.png)
 
 It is pretty obvious from just looking at the data that parasites have a large effect on host diversity, but we can start to quantify this difference using some of R's built-in functions. 
 
