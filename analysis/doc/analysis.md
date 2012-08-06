@@ -48,17 +48,20 @@ zero. This technique is called *bootstrapping* or sometimes, more generally,
 
 ![New Fake Distribution](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_hist.png)
 
+
+Let's say we now have a data set of the measured effect of cold temperature on
+body weight in some other species of fish.
+
 	cold_effects = rnorm(50, mean=1.0, sd=5)
 	
-Let's say this is the measured effect of cold temperature on body weight in
-some other species of fish. We want to know if there is really a trend of
-colder temperatures and heavier fish. We can think about testing this by asking
-how often we would see as extreme a mean if the true mean was zero. This would
-require us to specify the distribution, and would be called a parametric Monte
-Carlo test. In this case we know this data came from a normal distribution, so
-we could perform this test by looking at means from a set of random numbers
-drawn from this null distribution (with mean=0) and estimate the probability of
-observing a mean as extreme as the one we actually observed in `cold_effects`. 
+We want to know if colder temperatures really do lead to heavier fish.  One way
+to test this would be to ask how often we would see these means in body
+temperature if the true mean was zero.  This would be called a parametric
+*Monte Carlo* test. To do this, we would need to specify In this case we know
+these data came from a normal distribution, so we could perform this test by
+looking at means from a set of random numbers drawn from this null distribution
+(with mean=0) and estimate the probability of observing a mean as extreme as
+the one we actually observed in `cold_effects`. 
 	
 	#first define how many samples we'll be doing -- the more the better
 	num_samples <- 100000
@@ -302,7 +305,7 @@ for our differences in means!
 
 In this section, we introduce a few useful methods for analyzing your data in
 Python.  Namely, we cover how to compute the mean, variance, and standard error
-from a dataset.  For more advanced statistical analysis, we cover how to
+from a data set.  For more advanced statistical analysis, we cover how to
 perform a Mann-Whitney-Wilcoxon (MWW) RankSum test, how to perform an Analysis
 of variance (ANOVA) between multiple distributions, and how to compute
 bootstrapped 95% confidence intervals for non-normally distributed data.
@@ -387,7 +390,7 @@ approximation is good when you have more than 20 replicates.
 The MWW RankSum test is a useful test to determine if two distributions are
 significantly different or not. Unlike the t-test, the RankSum test does not
 assume that the data are normally distributed, potentially providing a more
-accurate assessment of the datasets.
+accurate assessment of the data sets.
 
 As an example, let's say we want to determine if the results of the two
 following experiments significantly differ or not:
@@ -471,7 +474,7 @@ the measured value.
 
 ### One-way analysis of variance (ANOVA)
 
-If you need to compare more than two datasets at a time, an ANOVA is your best
+If you need to compare more than two data sets at a time, an ANOVA is your best
 bet. For example, we have the results from three experiments with overlapping
 95% confidence intervals, and we want to confirm that the results for all three
 experiments are not significantly different.
