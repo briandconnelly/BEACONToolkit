@@ -43,8 +43,8 @@ mean is 0, or the difference between two samples is 0. We can demonstrate what
 exactly that means by computing the p-value of a sample, with the null
 hypothesis that the true mean is equal to zero, by resampling our data over and
 over and counting the number of times we observe a mean less than or equal to
-zero. This technique is called *bootstrapping* or sometimes, more generally,
-*resampling*. 
+zero. This technique is called **bootstrapping** or sometimes, more generally,
+**resampling**. 
 
 ![New Fake Distribution](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_hist.png)
 
@@ -57,7 +57,7 @@ body weight in some other species of fish.
 We want to know if colder temperatures really do lead to heavier fish.  One way
 to test this would be to ask how often we would see these means in body
 temperature if the true mean was zero.  This would be called a parametric
-*Monte Carlo* test. To do this, we would need to specify a distribution for
+**Monte Carlo** test. To do this, we would need to specify a distribution for
 these temperature means to be drawn from.  In this case we know our data came
 from a normal distribution, so we could perform this test by looking at means
 from a set of random numbers drawn from this null distribution (with mean=0)
@@ -82,7 +82,7 @@ actually observed in `cold_effects`.
 ![Monte Carlo](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/monte_carlo.png)
 	
 We can compare our simulated p-value to the t-test closed form solution and see
-they are quite similar. 
+that they are quite similar. 
 
 	#compare this to the t-test p-value
 	t.test(cold_effect, alternative="greater")
@@ -121,8 +121,8 @@ we want to sample with replacement by setting `replace=T`:
 
 ![Resampled Distributions](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/resamples.png)
 
-And if we calculate the mean of these resampled distributions many many times,
-we get what is known as the sampling distribution of means. We can repeat this
+If we calculate the mean of these resampled distributions many, many times, we
+get what is known as the sampling distribution of means. We can repeat this
 sampling process using the `replicate` function, here replicating it 100,000
 times.
 
