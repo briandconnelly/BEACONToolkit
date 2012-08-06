@@ -2,12 +2,12 @@
 
 ### What p-values aren't
 
-Before we can get into analyzing data with computational tools, we first need to
-understand a few basics about probability and statistics. Let's take a totally 
-fictitious example of fish. Maybe we expect a particular species of fish to have
-evolved larger bodies in cold environments but not hot ones. We can start by 
-looking at the distributions of weight between samples of fish caught in these 
-two different environments.
+Before we can get into analyzing data with computational tools, we first need
+to understand a few basics about probability and statistics. Let's take a
+totally fictitious example of fish. Maybe we expect a particular species of
+fish to have evolved larger bodies in cold environments but not hot ones. We
+can start by looking at the distributions of weight between samples of fish
+caught in these two different environments.
 
 	cold_fish = rnorm(5000, mean=20.5, sd=5)
 	hot_fish = rnorm(5000, mean=20, sd=5)
@@ -25,34 +25,37 @@ do a simple t-test our p-value is very small, less than 0.001.
 	t = 4.0446, df = 9997.997, p-value = 5.281e-05
 
 The point I'm trying to illustrate here is that p-values, while often important
-for publication, tell you very little about what is actually important. In this 
-case, the p-value is so small because we have so many samples. The slight 
-difference is real and the p-value reflects that, but less than one kilogram 
+for publication, tell you very little about what is actually important. In this
+case, the p-value is so small because we have so many samples. The slight
+difference is real and the p-value reflects that, but less than one kilogram
 difference has no biological meaning. Instead of thinking primarily about
-p-values, you should think about effect sizes and what they mean for your 
+p-values, you should think about effect sizes and what they mean for your
 hypotheses. 
 
 ### What p-values are
 
-So what does a p-value tell you then? The p-value is simply the probability of 
-observing as extreme data under the null hypothesis. The null hypothesis usually
-ends up being that the slope is 0, or the mean is 0, or the difference between 
-two samples is 0. We can demonstrate what exactly that means by computing the 
-p-value of a sample, with the null hypothesis that the true mean is equal to 
-zero, by resampling our data over and over again and counting the number of 
-times we observe a mean less than or equal to zero. This technique is called 
-bootstrapping and sometimes more generally resampling. 
+So what does a p-value tell you then? The p-value is simply the probability of
+observing as extreme data under the null hypothesis. The null hypothesis
+usually ends up being that the slope is 0, or the mean is 0, or the difference
+between two samples is 0. We can demonstrate what exactly that means by
+computing the p-value of a sample, with the null hypothesis that the true mean
+is equal to zero, by resampling our data over and over again and counting the
+number of times we observe a mean less than or equal to zero. This technique is
+called bootstrapping and sometimes more generally resampling. 
 
 ![New Fake Distribution](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_hist.png)
 
 	cold_effects = rnorm(50, mean=1.0, sd=5)
 	
-Let's say this is the measured effect of cold temperature on body weight in some 
-other species of fish. We want to know if there is really a trend of colder
-temperatures and heavier fish. We can think about testing this by asking how
-often we would see as extreme a mean if the true mean was zero. This would
-require us to specify the distribution, and would be called a parametric 
-Monte Carlo test. In this case we know this data came from a normal distribution, so we could perform this test by looking at means from a set of random numbers drawn from this null distribution (with mean=0) and estimate the probability of observing a mean as extreme as the one we actually observed in `cold_effects`. 
+Let's say this is the measured effect of cold temperature on body weight in
+some other species of fish. We want to know if there is really a trend of
+colder temperatures and heavier fish. We can think about testing this by asking
+how often we would see as extreme a mean if the true mean was zero. This would
+require us to specify the distribution, and would be called a parametric Monte
+Carlo test. In this case we know this data came from a normal distribution, so
+we could perform this test by looking at means from a set of random numbers
+drawn from this null distribution (with mean=0) and estimate the probability of
+observing a mean as extreme as the one we actually observed in `cold_effects`. 
 	
 	#first define how many samples we'll be doing -- the more the better
 	num_samples <- 100000
@@ -71,7 +74,8 @@ Monte Carlo test. In this case we know this data came from a normal distribution
 	
 ![Monte Carlo](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/monte_carlo.png)
 	
-We can compare our simulated p-value to the t-test closed form solution and see they are quite similar. 
+We can compare our simulated p-value to the t-test closed form solution and see
+they are quite similar. 
 
 	#compare this to the t-test p-value
 	t.test(cold_effect, alternative="greater")
@@ -82,9 +86,21 @@ We can compare our simulated p-value to the t-test closed form solution and see 
 
 ### What 95% confidence intervals are
 
-There is a lot of confusion about what 95% confidence intervals are. The most common interpretation is that they are where you expect the true mean to fall 95% of the time. Unfortunately, this is not exactly what they are. Instead, they tell you where your estimated mean will fall 95% of the time, if you were to replicate your experiment over and over again. Here we will quickly show you what this means, and how to bootstrap 95% confidence intervals for yourself. 
+There is a lot of confusion about what 95% confidence intervals are. The most
+common interpretation is that they are where you expect the true mean to fall
+95% of the time. Unfortunately, this is not exactly what they are. Instead,
+they tell you where your estimated mean will fall 95% of the time, if you were
+to replicate your experiment over and over again. Here we will quickly show you
+what this means, and how to bootstrap 95% confidence intervals for yourself. 
 
-Lets say we have a distribution, here `cold_effects` will serve as our data. The 95% confidence interval tells us if we were to go back out to the ocean and sample fish again thousands and thousands of times, where the mass of our estimated means would fall. We can think about this process as sampling from the underlying distribution over and over again, and while we don't have the underlying distribution, we do have an empirical one. With bootstrapping and resampling techniques in general, we treat our empirical distribution as the underlying distribution and sample repeatedly from it. 
+Lets say we have a distribution, here `cold_effects` will serve as our data.
+The 95% confidence interval tells us if we were to go back out to the ocean and
+sample fish again thousands and thousands of times, where the mass of our
+estimated means would fall. We can think about this process as sampling from
+the underlying distribution over and over again, and while we don't have the
+underlying distribution, we do have an empirical one. With bootstrapping and
+resampling techniques in general, we treat our empirical distribution as the
+underlying distribution and sample repeatedly from it. 
 
 Just to illustrate a bit of the variation we get when resampling from our data
 over and over again, here are a few box plots of individual resamplings. We can
@@ -95,8 +111,8 @@ we want to sample with replacement by setting `replace=T`:
 
 ![Resampled Distributions](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/resamples.png)
 
-And if we calculate the mean of these resampled distributions many many times, 
-we get what is known as the sampling distribution of means. We can repeat this 
+And if we calculate the mean of these resampled distributions many many times,
+we get what is known as the sampling distribution of means. We can repeat this
 sampling process using the `replicate` function, here replicating it 100,000
 times.
 
@@ -104,7 +120,12 @@ times.
 	
 ![Sample Mean Distribution](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/sampling_means.png)
 
-We know that if we sample over and over again and calculate the mean, it will approximate a normal distribution given enough samples. We also know that +/- 2 standard deviations of a normal distribution contain about 96% of the mass. So, using these two facts, we can estimate our confidence intervals as +/- 2 standard deviations of the sampling distribution. This is where, having resampled over and over again, the mean will end up about 95% of the time.
+We know that if we sample over and over again and calculate the mean, it will
+approximate a normal distribution given enough samples. We also know that +/- 2
+standard deviations of a normal distribution contain about 96% of the mass. So,
+using these two facts, we can estimate our confidence intervals as +/- 2
+standard deviations of the sampling distribution. This is where, having
+resampled over and over again, the mean will end up about 95% of the time.
 
 	c(mean(cold_effect) - 2 * sd(sample_means), mean(cold_effect) + 2 * sd(sample_means))
 	[1] 0.7933669 3.7101643
@@ -119,36 +140,47 @@ We can compare these bootstrapped confidence intervals to those of a t-test.
 
 ## Analysis in R
 
-Now that we have gone over a little bit about what statistics is (and what it 
-isn't), we can go through a few of the traditional analysis methods using R. 
-For this exercise, there is real data form a few runs of Avida studying 
-host-parasite coevolution in `BEACONToolkit/analysis/data/parasite_data.csv`. 
-This dataset has the diversity of the final host population using Shannon 
-Diversity, which balances even distributions of abundance as well as species 
-richness, measured at the end of runs with varying levels of parasite 
-virulence. Here virulence just means the percentage of CPU cycles, or energy, the parasites steal from their hosts. 
+Now that we have gone over a little bit about what statistics is (and what it
+isn't), we can go through a few of the traditional analysis methods using R.
+For this exercise, there is real data form a few runs of Avida studying
+host-parasite coevolution in `BEACONToolkit/analysis/data/parasite_data.csv`.
+This dataset has the diversity of the final host population using Shannon
+Diversity, which balances even distributions of abundance as well as species
+richness, measured at the end of runs with varying levels of parasite
+virulence. Here virulence just means the percentage of CPU cycles, or energy,
+the parasites steal from their hosts. 
 
-We will go into more detail on plotting tools with R and Python in future tutorials, but it is always useful to look at your data. This includes using the `summary`, `head`, and `tail` functions as mentioned before, but also with plots. Just to get a sense of each level of virulence, we can plot these as factors as opposed to the continuous variable they really are.
+We will go into more detail on plotting tools with R and Python in future
+tutorials, but it is always useful to look at your data. This includes using
+the `summary`, `head`, and `tail` functions as mentioned before, but also with
+plots. Just to get a sense of each level of virulence, we can plot these as
+factors as opposed to the continuous variable they really are.
 
 	plot(ShannonDiversity ~ as.factor(Virulence), data=parasite_data)
 
 ![Diversity by Virulence Treatment](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/diversity_vs_virulence.png)
 
-My typical runs are done with virulence set to 0.8, so lets focus on that set of data.
+My typical runs are done with virulence set to 0.8, so lets focus on that set
+of data.
 
 	normal_parasites <-  parasite_data[na.omit(parasite_data$Virulence == 0.8), ]
 	
-We use `na.omit` because there are some Virulence values that are NA, or not present in the dataset. These are runs that do not have parasites, and we should hold on to those too as a control.
+We use `na.omit` because there are some Virulence values that are NA, or not
+present in the dataset. These are runs that do not have parasites, and we
+should hold on to those too as a control.
 
 	no_parasites <- parasite_data[is.na(parasite_data$Virulence), ]
 
-We can make a box plot of just these two distributions to get a sense of how parasites affect host diversity with parasites at 0.8 virulence.
+We can make a box plot of just these two distributions to get a sense of how
+parasites affect host diversity with parasites at 0.8 virulence.
 
 	boxplot(no_parasites$ShannonDiversity, normal_parasites$ShannonDiversity, ylab="Shannon Diversity", xlab="W and W.O. Parasites", main="Normal Parasite Runs (0.8 Virulence)")
 	
 ![Diversity With and Without Parasites](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/normal_parasites.png)
 
-It is pretty obvious from just looking at the data that parasites have a large effect on host diversity, but we can start to quantify this difference using some of R's built-in functions. 
+It is pretty obvious from just looking at the data that parasites have a large
+effect on host diversity, but we can start to quantify this difference using
+some of R's built-in functions. 
 
 	mean(normal_parasites$ShannonDiversity)
 	[1] 1.269134
@@ -156,7 +188,9 @@ It is pretty obvious from just looking at the data that parasites have a large e
 	mean(no_parasites$ShannonDiversity)
 	[1] 0.2519426
 	
-Well, those are pretty different! But, means doesn't tell us about the variation in our distributions. The variance and standard deviation are two common measures of spread that have built in functions in R. 
+Well, those are pretty different! But, means doesn't tell us about the
+variation in our distributions. The variance and standard deviation are two
+common measures of spread that have built in functions in R. 
 
 	var(normal_parasites$ShannonDiversity)
 	[1] 0.6110384
@@ -168,24 +202,38 @@ Well, those are pretty different! But, means doesn't tell us about the variation
 	sd(normal_parasites$ShannonDiversity)
 	[1] 0.7816895
 	
-This tells us about the variation in our observed data but not the sample distribution, which is what we care about. We want to know if we repeated this experiment over and over again, what would the variation in our observed mean be. We can get at this using the standard error of the mean or S.E.M., which is estimating the variation in the sampling distribution. Unfortunately there is no built-in R function for this, but it is relatively simple to compute.
+This tells us about the variation in our observed data but not the sample
+distribution, which is what we care about. We want to know if we repeated this
+experiment over and over again, what would the variation in our observed mean
+be. We can get at this using the standard error of the mean or SEM, which is
+estimating the variation in the sampling distribution. Unfortunately there is
+no built-in R function for this, but it is relatively simple to compute.
 
 	sem <- function(values) {sd(values)/sqrt(length(values))}
 	sem(normal_parasites$ShannonDiversity)
 	[1] 0.1105476
 	
-A very useful measure of our uncertainty in the estimated mean is the 95% confidence interval. These are roughly 2*S.E.M above and below the mean, but the exact number of S.E.Ms can be calculated using the t-distribution quantiles. Here we want the middle 95% of the values, so we want to know where the extreme 5% of the data falls, but split between extreme low and extreme high values (i.e., the lower 0.025 and upper 0.975 quantiles). 
+A very useful measure of our uncertainty in the estimated mean is the 95%
+confidence interval. These are roughly 2*SEMs above and below the mean, but the
+exact number of SEMs can be calculated using the t-distribution quantiles. Here
+we want the middle 95% of the values, so we want to know where the extreme 5%
+of the data falls, but split between extreme low and extreme high values (i.e.,
+the lower 0.025 and upper 0.975 quantiles). 
 
 	qt(c(0.025, 0.975), df=length(normal_parasites$ShannonDiversity))
 	[1] -2.008559  2.008559
 	
-In this case, it is slightly more than 2 S.E.Ms. In general, with more than 20 or so samples, 2 is a good approximation for the 95% confidence intervals. Now we can calculate what our 95% confidence intervals are for the mean host diversity of typical parasite runs.
+In this case, it is slightly more than 2 SEMs. In general, with more than 20 or
+so samples, 2 is a good approximation for the 95% confidence intervals. Now we
+can calculate what our 95% confidence intervals are for the mean host diversity
+of typical parasite runs.
 
 	c( mean(normal_parasites$ShannonDiversity) -2.008559*sem(normal_parasites$ShannonDiversity),  
 	   mean(normal_parasites$ShannonDiversity) + 2.008559*sem(normal_parasites$ShannonDiversity))
 	[1] 1.047092 1.491175
 	
-We could also use the `t.test` function to compute the 95% confidence intervals for us.
+We could also use the `t.test` function to compute the 95% confidence intervals
+for us.
 
 	t.test(normal_parasites$ShannonDiversity, conf.int=T)
 	
@@ -193,7 +241,11 @@ We could also use the `t.test` function to compute the 95% confidence intervals 
 	95 percent confidence interval:
 	 1.046980 1.491288
 	 
-The `t.test` function also returned a p-value, but for the null hypothesis that the true mean of this distribution is zero. While this may have some biological meaning, we have a control that we really want to test against. The `t.test` function can also perform a two-sample t-test and compare the means of two distributions. 
+The `t.test` function also returned a p-value, but for the null hypothesis that
+the true mean of this distribution is zero. While this may have some biological
+meaning, we have a control that we really want to test against. The `t.test`
+function can also perform a two-sample t-test and compare the means of two
+distributions. 
 
 
 	t.test(normal_parasites$ShannonDiversity, no_parasites$ShannonDiversity)
@@ -208,9 +260,23 @@ The `t.test` function also returned a p-value, but for the null hypothesis that 
 	mean of x mean of y 
 	1.2691338 0.2519426
 	
-This time the p-value is telling us the probability of observing as extreme a difference between distributions given the null hypothesis that they have the same mean, and it is very very small. But, as we argued earlier, the more important measure is the actual difference between treatments rather than the p-value. In this case, the means are quite different: 1.26 as compared to 0.25. Conveniently, the 95% confidence intervals that are returned from a two-sample t-test is giving us information about the uncertainty in the estimated difference between distributions. We can see the difference is pretty substantial in this case. 
+This time the p-value is telling us the probability of observing as extreme a
+difference between distributions given the null hypothesis that they have the
+same mean, and it is very very small. But, as we argued earlier, the more
+important measure is the actual difference between treatments rather than the
+p-value. In this case, the means are quite different: 1.26 as compared to 0.25.
+Conveniently, the 95% confidence intervals that are returned from a two-sample
+t-test is giving us information about the uncertainty in the estimated
+difference between distributions. We can see the difference is pretty
+substantial in this case. 
 
-Now, if you remember back to the box plot of diversities from runs without parasites, it didn't look very normally distributed. The median and lower quartile were squashed together close to zero. The t-test is parametric and makes the assumption that our data is normally distributed. While it is fairly robust to violations of that assumption, there are non-parametric tests designed to deal with data like these. In particular, the Wilcox Rank-Sum test, also known as the Mann-Whitney U Test, is a general non-parametric statistic. 
+Now, if you remember back to the box plot of diversities from runs without
+parasites, it didn't look very normally distributed. The median and lower
+quartile were squashed together close to zero. The t-test is parametric and
+makes the assumption that our data is normally distributed. While it is fairly
+robust to violations of that assumption, there are non-parametric tests
+designed to deal with data like these. In particular, the Wilcox Rank-Sum test,
+also known as the Mann-Whitney U Test, is a general non-parametric statistic. 
 
 	 wilcox.test(normal_parasites$ShannonDiversity, no_parasites$ShannonDiversity, conf.int=T)
 
@@ -226,29 +292,32 @@ Now, if you remember back to the box plot of diversities from runs without paras
 	 difference in location 
 	               1.140251
 
-In this case, using a non-parametric test actually gave us more extreme values for our differences in means! 
+In this case, using a non-parametric test actually gave us more extreme values
+for our differences in means! 
 
 ## Statistical Analysis in Python
 
-In this section, we introduce a few useful methods for analyzing your data in Python.
-Namely, we cover how to compute the mean, variance, and standard error from a dataset.
-For more advanced statistical analysis, we cover how to perform a
-Mann-Whitney-Wilcoxon (MWW) RankSum test, how to perform an Analysis of variance (ANOVA)
-between multiple distributions, and how to compute bootstrapped 95% confidence intervals for
-non-normally distributed data.
+In this section, we introduce a few useful methods for analyzing your data in
+Python.  Namely, we cover how to compute the mean, variance, and standard error
+from a dataset.  For more advanced statistical analysis, we cover how to
+perform a Mann-Whitney-Wilcoxon (MWW) RankSum test, how to perform an Analysis
+of variance (ANOVA) between multiple distributions, and how to compute
+bootstrapped 95% confidence intervals for non-normally distributed data.
 
 ### Python's SciPy Module
 
-The majority of data analysis in Python can be performed with the SciPy module. SciPy
-provides a plethora of statistical functions and tests that will handle the majority of
-your analytical needs. If we don't cover a statistical function or test that you require
-for your research, SciPy's full statistical library is described in detail at:
+The majority of data analysis in Python can be performed with the SciPy module.
+SciPy provides a plethora of statistical functions and tests that will handle
+the majority of your analytical needs. If we don't cover a statistical function
+or test that you require for your research, SciPy's full statistical library is
+described in detail at:
 http://docs.scipy.org/doc/scipy/reference/tutorial/stats.html
 
-In the examples below, `dataset_list` represents the list of data that you wish to
-analyze. e.g., `dataset_list` could be a list of 30 best fitness values from 30 replicate
-runs of an Avida experiment. For the purposes of those following along with the examples,
-`dataset_list` will be a set of normally-distributed numbers:
+In the examples below, `dataset_list` represents the list of data that you wish
+to analyze. e.g., `dataset_list` could be a list of 30 best fitness values from
+30 replicate runs of an Avida experiment. For the purposes of those following
+along with the examples, `dataset_list` will be a set of normally-distributed
+numbers:
 
 	import numpy as np
 
@@ -265,8 +334,8 @@ runs of an Avida experiment. For the purposes of those following along with the 
 
 ### Mean
 
-The mean performance of an experiment gives a good idea of how the experiment will
-turn out *on average* under a given treatment.
+The mean performance of an experiment gives a good idea of how the experiment
+will turn out *on average* under a given treatment.
 
 	import scipy
 
@@ -278,9 +347,9 @@ turn out *on average* under a given treatment.
 
 ### Variance
 
-The variance in the performance provides a measurement of how consistent the results
-of an experiment are. The lower the variance, the more consistent the results are, and
-vice versa.
+The variance in the performance provides a measurement of how consistent the
+results of an experiment are. The lower the variance, the more consistent the
+results are, and vice versa.
 
 	import scipy
 	
@@ -290,10 +359,11 @@ vice versa.
 	
 > Variance around the mean: 30.0722365196
 
-### Standard Error of the Mean (S.E.M.)
+### Standard Error of the Mean (SEM)
 
-Combined with the mean, the S.E.M. enables you to establish a range around a mean that
-the majority of any future replicate experiments will most likely fall within.
+Combined with the mean, the SEM enables you to establish a range around a mean
+that the majority of any future replicate experiments will most likely fall
+within.
 
 	from scipy import stats
 
@@ -303,20 +373,21 @@ the majority of any future replicate experiments will most likely fall within.
 	
 > Standard error of the mean: 1.99590532404
 
-A single S.E.M. will usually envelop 68% of the possible replicate means
-and two S.E.M.s envelop 95% of the possible replicate means. Two
-S.E.M.s are called the "estimated 95% confidence interval." The confidence
-interval is estimated because the exact width depend on how many replicates
-you have; this approximation is good when you have more than 20 replicates.
+A single SEM will usually envelop 68% of the possible replicate means and two
+SEMs envelop 95% of the possible replicate means. Two SEMs are called the
+"estimated 95% confidence interval." The confidence interval is estimated
+because the exact width depend on how many replicates you have; this
+approximation is good when you have more than 20 replicates.
 
 ### Mann-Whitney-Wilcoxon (MWW) RankSum test
 
-The MWW RankSum test is a useful test to determine if two distributions are significantly
-different or not. Unlike the t-test, the RankSum test does not assume that the data
-are normally distributed, potentially providing a more accurate assessment of the datasets.
+The MWW RankSum test is a useful test to determine if two distributions are
+significantly different or not. Unlike the t-test, the RankSum test does not
+assume that the data are normally distributed, potentially providing a more
+accurate assessment of the datasets.
 
-As an example, let's say we want to determine if the results of the two following
-experiments significantly differ or not:
+As an example, let's say we want to determine if the results of the two
+following experiments significantly differ or not:
 
 	import numpy as np
 	
@@ -361,7 +432,8 @@ distributions are the same.
 If P <= 0.05, we are highly confident that the distributions significantly differ, and
 can claim that the treatment has a significant impact on the measured value.
 
-If the treatments do *not* significantly differ, we could expect a result such as the following:
+If the treatments do *not* significantly differ, we could expect a result such
+as the following:
 
 	# create a set of normally-distributed numbers centered around the same mean
 	experiment3 = np.random.normal(40, 8, 30)
@@ -390,15 +462,16 @@ If the treatments do *not* significantly differ, we could expect a result such a
 	
 > MWW RankSum P for experiments 3 and 4 = 0.383055045846
 
-With P > 0.05, we must say that the distributions do not significantly differ. Thus the
-treatments in experiments 3 and 4 do not have a significant impact on the measured value.
+With P > 0.05, we must say that the distributions do not significantly differ.
+Thus the treatments in experiments 3 and 4 do not have a significant impact on
+the measured value.
 
 ### One-way analysis of variance (ANOVA)
 
-If you need to compare more than two datasets at a time, an ANOVA is your best bet. For
-example, we have the results from three experiments with overlapping 95% confidence
-intervals, and we want to confirm that the results for all three experiments are not
-significantly different.
+If you need to compare more than two datasets at a time, an ANOVA is your best
+bet. For example, we have the results from three experiments with overlapping
+95% confidence intervals, and we want to confirm that the results for all three
+experiments are not significantly different.
 
 	import numpy as np
 	
@@ -444,12 +517,14 @@ experiments are not significantly different.
 ### Bootstrapped 95% confidence intervals
 
 Oftentimes in wet lab research, it's difficult to perform the 20 replicate runs
-recommended for computing reliable confidence intervals with S.E.M. In this case,
-bootstrapping the confidence intervals is a much more accurate method of determining
-the 95% confidence interval around your experiment's mean performance.
+recommended for computing reliable confidence intervals with SEM In this case,
+bootstrapping the confidence intervals is a much more accurate method of
+determining the 95% confidence interval around your experiment's mean
+performance.
 
-Unfortunately, SciPy doesn't have bootstrapping built into its standard library yet. On
-the bright side, however, we have a pre-built bootstrapping function below:
+Unfortunately, SciPy doesn't have bootstrapping built into its standard library
+yet. On the bright side, however, we have a pre-built bootstrapping function
+below:
 
 	# Confidence interval bootstrapping function
 	# Written by: cevans
@@ -516,7 +591,8 @@ the bright side, however, we have a pre-built bootstrapping function below:
         else:
                 raise "Method %s not supported" % method
 
-Bootstrapping 95% confidence intervals around the mean with this function is simple:
+Bootstrapping 95% confidence intervals around the mean with this function is
+simple:
 
 	import scipy
 	import numpy as np
@@ -542,8 +618,8 @@ Note that you can change the range of the confidence interval by setting the alp
 
 > Bootstrapped 80% confidence interval low: 14.9653005047 , high: 17.5814853635
 
-And also modify the size of the bootstrapped sample pool that the confidence intervals
-are taken from:
+And also modify the size of the bootstrapped sample pool that the confidence
+intervals are taken from:
 
 	# bootstrap 20,000 samples instead of only 10,000
 	CIs = ci(experiment1, scipy.mean, n_samples=20000)
@@ -552,16 +628,17 @@ are taken from:
 > Bootstrapped 95% confidence interval low: 14.2447813408 , high: 18.2276982261
 	
 Generally, bootstrapped 95% confidence intervals provide more accurate confidence
-intervals than 95% confidence intervals estimated from the S.E.M.
+intervals than 95% confidence intervals estimated from the SEM
 
 ## Python's pandas Module
 
-The pandas module provides powerful, efficient, R-like DataFrame objects capable of
-calculating statistics en masse on the entire DataFrame. DataFrames are very useful
-for when you need to compute statistics over multiple replicate runs.
+The pandas module provides powerful, efficient, R-like DataFrame objects
+capable of calculating statistics en masse on the entire DataFrame. DataFrames
+are very useful for when you need to compute statistics over multiple replicate
+runs.
 
-For the purposes of this tutorial, `experimentList` and `experimentDF` shall be assigned
-by the following Python code:
+For the purposes of this tutorial, `experimentList` and `experimentDF` shall be
+assigned by the following Python code:
 
 	import pandas
 	import numpy as np
@@ -580,9 +657,10 @@ by the following Python code:
 
 ### Mean
 
-Conveniently, DataFrames have all kinds of built-in functions to perform standard
-operations on them en masse: `add()`, `sub()`, `mul()`, `div()`, `mean()`, `std()`, etc.
-The full list is located at: http://pandas.sourceforge.net/generated/pandas.DataFrame.html
+Conveniently, DataFrames have all kinds of built-in functions to perform
+standard operations on them en masse: `add()`, `sub()`, `mul()`, `div()`,
+`mean()`, `std()`, etc.  The full list is located at:
+http://pandas.sourceforge.net/generated/pandas.DataFrame.html
 
 Thus, computing the mean of an entire DataFrame only takes one line of code:
 
@@ -598,9 +676,10 @@ Computing the variance is similarly easy:
 
 	varianceDF = experimentDF.var()
 
-### Standard Error of the Mean (S.E.M.)
+### Standard Error of the Mean (SEM)
 
-Since DataFrames don't have a built-in S.E.M. function, you have to compute it yourself:
+Since DataFrames don't have a built-in SEM function, you have to compute it
+yourself:
 
 	from pandas import *
 	
@@ -616,8 +695,8 @@ Since DataFrames don't have a built-in S.E.M. function, you have to compute it y
 
 ### Accessing specific data columns
 
-Data from specific columns of the DataFrame can be accessed by indexing the DataFrame
-with the column name.
+Data from specific columns of the DataFrame can be accessed by indexing the
+DataFrame with the column name.
 
 	print confidenceIntervalDF["C"]
 	
@@ -656,8 +735,8 @@ with the column name.
 
 ### NumPy/SciPy methods on pandas DataFrames
 
-Finally, NumPy and SciPy methods can be applied directly to pandas DataFrames with the
-`aggregate()` function.
+Finally, NumPy and SciPy methods can be applied directly to pandas DataFrames
+with the `aggregate()` function.
 
 	import numpy as np
 	from scipy import stats as st
