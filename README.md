@@ -11,7 +11,7 @@ and ecology.
 
 ## Sections
 * Working with CSV datasets (Excel, R, Python)
-* Statistical analysis (Excel, R, Python)
+* Statistical analysis (R, Python)
 
 ## License
 
