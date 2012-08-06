@@ -69,13 +69,16 @@ Monte Carlo test. In this case we know this data came from a normal distribution
 	#output
 	[1] "p-value =  0.00105"
 	
+![Monte Carlo](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/monte_carlo.png)
+	
+We can compare our simulated p-value to the t-test closed form solution and see they are quite similar. 
+
 	#compare this to the t-test p-value
 	t.test(cold_effect, alternative="greater")
 	
 	#output
 	t = 3.0718, df = 49, p-value = 0.001734
-	
-![Monte Carlo](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/monte_carlo.png)
+
 
 ### What 95% confidence intervals are
 
