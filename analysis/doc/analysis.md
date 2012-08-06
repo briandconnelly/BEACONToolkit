@@ -421,7 +421,7 @@ experiments are not significantly different.
 
 ### Bootstrapped 95% confidence intervals
 
-Oftentimes in wet lab research, it's difficult to perform the 30 replicate runs
+Oftentimes in wet lab research, it's difficult to perform the 20 replicate runs
 recommended for computing reliable confidence intervals with S.E.M. In this case,
 bootstrapping the confidence intervals is a much more accurate method of determining
 the 95% confidence interval around your experiment's mean performance.
