@@ -52,11 +52,36 @@ other species of fish. We want to know if there is really a trend of colder
 temperatures and heavier fish. We can think about testing this by asking how
 often we would see as extreme a mean if the true mean was zero. This would
 require us to specify the distribution, and would be called a parametric 
-Monte Carlo test. However, another way to ask this question would be how
-often we would observe a mean less than or equal to zero if we resampled from
-our data over and over again. This would be a resampling/bootstrap test.
+Monte Carlo test. In this case we know this data came from a normal distribution, so we could perform this test by looking at means from a set of random numbers drawn from this null distribution (with mean=0) and estimate the probability of observing a mean as extreme as the one we actually observed in `cold_effects`. 
+	
+	#first define how many samples we'll be doing -- the more the better
+	num_samples <- 100000
 
-![Resampled Distributions](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/resamples.png)
+	#generate a sample mean distribution under the null hypothesis
+	monte_carlo_samples <- replicate(num_samples, mean(rnorm(length(cold_effect), mean=0, sd=sd(cold_effect))))
+	
+	#we can look at it
+	hist(monte_carlo_samples, main="Monte Carlo Simulated Means")
+
+	p_val <- length(monte_carlo_samples[monte_carlo_samples>= mean(cold_effect)])/length(monte_carlo_samples)
+	print(paste("p-value = ", p_val))
+	
+	#output
+	[1] "p-value =  0.00105"
+	
+	#compare this to the t-test p-value
+	t.test(cold_effect, alternative="greater")
+	
+	#output
+	t = 3.0718, df = 49, p-value = 0.001734
+	
+![Monte Carlo](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/monte_carlo.png)
+
+### What 95% confidence intervals are
+
+There is a lot of confusion about what 95% confidence intervals are. The most common interpretation is that they are where you expect the true mean to fall 95% of the time. Unfortunately, this is not exactly what they are. Instead, they tell you where your estimated mean will fall 95% of the time, if you were to replicate your experiment over and over again. Here we will quickly show you what this means, and how to bootstrap 95% confidence intervals for yourself. 
+
+Lets say we have a distribution, here `cold_effects` will serve as our data. The 95% confidence interval tells us if we were to go back out to the ocean and sample fish again thousands and thousands of times, where the mass of our estimated means would fall. We can think about this process as sampling from the underlying distribution over and over again, and while we don't have the underlying distribution, we do have an empirical one. With bootstraping and resampling techniques in general, we treat our empirical distribution as the underlying distribution and sample repeatedly from it. 
 
 Just to illustrate a bit of the variation we get when resampling from our data
 over and over again, here are a few boxplots of individual resamplings. We can
@@ -65,7 +90,7 @@ we want to sample with replacement by setting `replace=T`:
 
 	sample(cold_effects, size=length(a), replace=T)
 
-![Histogram of Resampled Means](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/sampling_means.png)
+![Resampled Distributions](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/resamples.png)
 
 And if we calculate the mean of these resampled distributions many many times, 
 we get what is known as the sampling distribution of means. We can repeate this 
@@ -74,26 +99,20 @@ times.
 
 	sample_means <- replicate(100000, mean(sample(cold_effects, size=length(cold_effects), replace=T)))
 	
-Now we can ask how often, given our data, we see a mean that is equal or less
-than zero, we can get a p-value out of this resampling process! 
+![Sample Mean Distribution](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/sampling_means.png)
 
-	length(sample_means[sample_means <= 0])/num_samples
+We know that if we sample over and over again and calculate the mean, it will aproximate a normal distribution given enough samples. We also know that +/- 2 standard deviations of a normal distribution contain about 96% of the mass. So, using these two facts, we can estimate our confidence intervals as +/- 2 standard deviations of the sampling distribution. This is where, having resampled over and over again, the mean will end up about 95% of the time.
+
+	c(mean(cold_effect) - 2 * sd(sample_means), mean(cold_effect) + 2 * sd(sample_means))
+	[1] 0.7933669 3.7101643
+	
+We can compare these bootstrapped confidence intervals to those of a t-test.
+
+	t.test(cold_effect)
 	
 	#output
-	[1] 0.07355
-
-And we can compare this to the p-value given a normal one-tailed t-test:
-
-	t.test(cold_effects, alternative="greater")
-	
-	#output
-	t = 1.4379, df = 49, p-value = 0.07842
-	
-If you do these sort of resampling and bootstrap statistics often, you'll 
-notice they are often the same as the parametric estimates. The power of these 
-resampling and bootstrap statistics is in how easy they are to make and taylor 
-to your specific hypotheses and data, not neccesariy in getting better or 
-different results. 
+	95 percent confidence interval:
+	 0.7786423 3.7248889
 
 ## Analysis in R
 
