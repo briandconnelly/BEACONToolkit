@@ -212,8 +212,8 @@ In this section, we introduce a few useful methods for analyzing your data in Py
 Namely, we cover how to compute the mean, variance, and standard error from a dataset.
 For more advanced statistical analysis, we cover how to perform a
 Mann-Whitney-Wilcoxon (MWW) RankSum test, how to perform an Analysis of variance (ANOVA)
-between multiple distributions, and how to compute bootstrapped 95% confidence
-intervals for non-normally distributed data.
+between multiple distributions, and how to compute bootstrapped 95% confidence intervals for
+non-normally distributed data.
 
 ### Python's SciPy Module
 
@@ -231,8 +231,17 @@ runs of an Avida experiment. For the purposes of those following along with the 
 	import numpy as np
 
 	dataset_list = np.random.normal(20, 5, 30)
+	
+	print dataset_list
+	
+> [ 29.31616689  17.84990351  18.29067038  22.88000839  11.40115392
+>   16.25772419  15.06432056   9.95443695  14.96259294  20.85094509
+>   13.48477627  20.03862034  22.71966826  26.49146294  26.41032275
+>   16.87420833  26.74874152  15.24608994  20.19901887  25.9643908
+>   13.06743069  22.83800346  30.86368     17.37685739  16.56721256
+>   22.23323283  26.31665391  23.87633505  19.18316128  28.03331025]
 
-#### Mean
+### Mean
 
 The mean performance of an experiment gives a good idea of how the experiment will
 turn out *on average* under a given treatment.
@@ -241,9 +250,11 @@ turn out *on average* under a given treatment.
 
 	dataset_mean = scipy.mean(dataset_list)
 	
-	print "Dataset mean: ", dataset_mean
+	print "Dataset mean:", dataset_mean
+	
+> Dataset mean: 20.378703342
 
-#### Variance
+### Variance
 
 The variance in the performance provides a measurement of how consistent the results
 of an experiment are. The lower the variance, the more consistent the results are, and
@@ -253,18 +264,22 @@ vice versa.
 	
 	dataset_variance = scipy.var(dataset_list)
 	
-	print "Variance around the mean: ", dataset_variance
+	print "Variance around the mean:", dataset_variance
+	
+> Variance around the mean: 30.0722365196
 
-#### Standard Error of the Mean (S.E.M.)
+### Standard Error of the Mean (S.E.M.)
 
 Combined with the mean, the S.E.M. enables you to establish a range around a mean that
-the majority of any future replicate experiments will most likely fall within. 
+the majority of any future replicate experiments will most likely fall within.
 
-	import scipy
+	from scipy import stats
 
 	dataset_stderr = 1.96 * stats.sem(dataset_list)
 	
-	print "Standard error of the mean: ", dataset_stderr
+	print "Standard error of the mean:", dataset_stderr
+	
+> Standard error of the mean: 1.99590532404
 
 A single S.E.M. will usually envelop 68% of the possible replicate means
 and two S.E.M.s envelop 95% of the possible replicate means. Two
@@ -272,7 +287,7 @@ S.E.M.s are called the "estimated 95% confidence interval." The confidence
 interval is estimated because the exact width depend on how many replicates
 you have; this approximation is good when you have more than 20 replicates.
 
-#### Mann-Whitney-Wilcoxon (MWW) RankSum test
+### Mann-Whitney-Wilcoxon (MWW) RankSum test
 
 The MWW RankSum test is a useful test to determine if two distributions are significantly
 different or not. Unlike the t-test, the RankSum test does not assume that the data
@@ -282,9 +297,33 @@ As an example, let's say we want to determine if the results of the two followin
 experiments significantly differ or not:
 
 	import numpy as np
-
-	experiment1 = np.random.rand(1, 30)
-	experiment2 = np.random.rand(1, 30)
+	
+	# create random set of numbers between 0 and 10
+	experiment1 = np.random.rand(1, 50) * 10
+	experiment2 = np.random.rand(1, 50) * 10
+	
+	print experiment1
+	print experiment2
+	
+> [[ 0.60703811  2.02903267  7.77922897  0.72135786  7.60735994  2.55005731
+>    3.75147232  9.92628774  5.84305081  8.70985479  6.24811885  1.90969196
+>    9.10927591  3.01245551  9.06592429  9.56689585  4.48222746  7.44179666
+>    6.24691287  2.23830165  4.35116166  2.84018573  0.08320698  4.36125059
+>    1.4610135   5.86651043  1.89150441  6.24918774  6.57098487  4.29357824
+>    1.5557837   9.63006435  0.71365672  7.11599719  4.02809286  7.65547018
+>    8.82567936  0.54906886  8.55374451  2.57840604  3.20837339  5.73256059
+>    5.7241952   9.35435413  9.35996839  7.01528296  4.66974079  6.09729923
+>    4.84421278  9.62590103]]
+   
+> [[ 5.94954301  4.02512252  5.10857072  0.20204057  8.57127551  7.51061019
+>    7.39677011  9.39687917  9.11026608  9.4898699   9.00727209  8.47904713
+>    1.56610254  0.71595907  8.30823977  5.63675437  3.82638994  3.26857413
+>    4.81009474  5.15329638  0.78554851  8.05647441  4.42453386  7.16148733
+>    5.37506635  6.07097425  1.18304531  4.24637205  0.98300946  3.32876637
+>    2.28266522  4.95443069  5.48805806  5.20826745  1.528031    8.50207874
+>    9.69815007  7.36248269  2.17102453  7.15547992  8.51739963  0.85976576
+>    7.43011228  8.14334652  1.03625833  5.92170905  8.47008621  8.40191409
+>    2.95670326  1.66834695]]
 
 A quick RankSum test will provide a P value indicating whether or not the two
 distributions are the same.
@@ -293,12 +332,46 @@ distributions are the same.
 	
 	z_stat, p_val = stats.ranksums(experiment1, experiment2)
 	
-	print "MWW RankSum P = ", p_val
+	print "MWW RankSum P for experiments 1 and 2 =", p_val
 	
-If P <= 0.05, we are confident that the distributions significantly differ, and
+> MWW RankSum P for experiments 1 and 2 = 5.73303143758e-07
+	
+If P <= 0.05, we are highly confident that the distributions significantly differ, and
 can claim that the treatment has a significant impact on the measured value.
 
-#### One-way analysis of variance (ANOVA)
+If the treatments do *not* significantly differ, we could expect a result such as the following:
+
+	# create a set of normally-distributed numbers centered around the same mean
+	experiment3 = np.random.normal(40, 8, 30)
+	experiment4 = np.random.normal(40, 8, 30)
+	
+	print experiment3
+	print experiment4
+	
+> [ 57.9564105   37.97638507  40.65139054  55.43770779  49.52670648
+>   39.17122622  48.87309287  31.08453766  47.93442482  48.22312111
+>   51.93581354  58.72188138  39.82392081  37.0940381   37.61361859
+>   50.62734137  44.41113408  10.27225975  43.62763019  29.33972703
+>   44.71846967  38.80722083  44.86990128  36.50444083  41.35612323
+>   48.47557548  46.86753584  34.36680173  41.29560205  42.72153454]
+
+> [ 37.79410956  30.15902312  45.38095056  48.54958363  47.86142528
+>   40.29446501  33.87154296  47.93095233  47.49276641  46.16960774
+>   39.2747562   23.60764727  36.1324458   30.60504485  43.65414926
+>   34.49818113  54.88851323  49.05865549  42.83492157  40.09497425
+>   27.24463829  46.34087852  34.35112739  46.51584338  52.38865353
+>   40.67349906  45.40321415  36.09856076  52.37654715  30.63914578]
+	
+	z_stat, p_val = stats.ranksums(experiment3, experiment4)
+	
+	print "MWW RankSum P for experiments 3 and 4 =", p_val
+	
+> MWW RankSum P for experiments 3 and 4 = 0.383055045846
+
+With P > 0.05, we must say that the distributions do not significantly differ. Thus the
+treatments in experiments 3 and 4 do not have a significant impact on the measured value.
+
+### One-way analysis of variance (ANOVA)
 
 If you need to compare more than two datasets at a time, an ANOVA is your best bet. For
 example, we have the results from three experiments with overlapping 95% confidence
@@ -306,23 +379,49 @@ intervals, and we want to confirm that the results for all three experiments are
 significantly different.
 
 	import numpy as np
+	
+	# generate 3 sets of normally distributed numbers
+	experiment1 = np.random.normal(20, 3, 30)
+	experiment2 = np.random.normal(18, 5, 30)
+	experiment3 = np.random.normal(19, 7, 30)
+	
+	print experiment1
+	print experiment2
+	print experiment3
 
-	experiment1 = np.random.rand(1, 30)
-	experiment2 = np.random.rand(1, 30)
-	experiment3 = np.random.rand(1, 30)
+> [ 19.04378835  22.50421579  24.34944666  22.51816612  20.58749006
+>   12.8445342   18.30013223  27.3257252   17.94535996  18.91757146
+>   18.37062731  18.65238219  18.38667562  22.60495363  24.76745954
+>   23.04309348  18.85710967  18.21680551  27.35845316  19.88643909
+>   20.99802896  20.66157181  21.80630328  23.24209409  16.03063632
+>   22.34485767  20.92888144  19.68930839  16.73974945  18.07995139]
+> [ 27.81170323  10.94953741  16.9971959   15.61408967  15.45994329
+>   18.65727731  21.58641937  15.52435895  11.2323641   20.92883425
+>   23.79364776  15.72508182  25.26726475  21.97336108  14.85964094
+>   16.72098642  13.01312028  16.41548278  16.46276207  20.45849468
+>   15.48204606  21.02902367  23.97056686  24.01698211  16.95786928
+>   21.32214887  15.14553344  16.77880364  19.99548804  18.45136648]
+> [ 13.43821528  14.53030599  21.96858873  14.87958515   6.77025586
+>   33.31744607   6.96561297  33.32049064  21.16775149  19.06799499
+>   29.8830259    8.11961867  30.82037979  16.36569719  13.32181128
+>   30.09211718  19.61686393  24.02101628  16.29424766  23.98372488
+>   22.32620927   8.50589624  30.20030432  24.58815171  12.49966463
+>   30.50019967  17.89961298  23.10544466  13.70368434  14.70896301]
 
 	from scipy import stats
 	
 	f_val, p_val = stats.f_oneway(experiment1, experiment2, experiment3)
 	
-	print "One-way ANOVA P = ", p_val
+	print "One-way ANOVA P =", p_val
 	
-If P > 0.05, we can claim with confidence that the means of the results of all three
+> One-way ANOVA P = 0.333441170471
+	
+If P > 0.05, we can claim with high confidence that the means of the results of all three
 experiments are not significantly different.
 
-#### Bootstrapped 95% confidence intervals
+### Bootstrapped 95% confidence intervals
 
-Oftentimes it's difficult to perform the 20+ replicate runs
+Oftentimes in wet lab research, it's difficult to perform the 30 replicate runs
 recommended for computing reliable confidence intervals with S.E.M. In this case,
 bootstrapping the confidence intervals is a much more accurate method of determining
 the 95% confidence interval around your experiment's mean performance.
@@ -399,28 +498,41 @@ Bootstrapping 95% confidence intervals around the mean with this function is sim
 
 	import scipy
 	import numpy as np
-
-	experiment1 = np.random.rand(1, 10)
-
-	CIs = ci(experiment1, scipy.mean)
 	
-	print "Bootstrapped 95% confidence interval low: ", CIs[0], ", high: ", CIs[1]
+	experiment1 = np.random.normal(15, 3, 10)
+	
+	print experiment1
+
+> [ 15.85892027  19.46669957  16.94655472  15.23605432  14.42308533
+>   11.26638304  20.18231971  21.21970167  11.40363899  16.38765404]
+
+	CIs = ci(data=experiment1, statfun=scipy.mean)
+	
+	print "Bootstrapped 95% confidence interval low:", CIs[0], ", high:", CIs[1]
+	
+> Bootstrapped 95% confidence interval low: 14.2865506829 , high: 18.2302554524
 	
 Note that you can change the range of the confidence interval by setting the alpha:
 
-	# 90% confidence interval
-	ci(experiment1, scipy.mean, alpha=0.1)
+	# 80% confidence interval
+	CIs = ci(experiment1, scipy.mean, alpha=0.2)
+	print "Bootstrapped 80% confidence interval low:", CIs[0], ", high:", CIs[1]
+
+> Bootstrapped 80% confidence interval low: 14.9653005047 , high: 17.5814853635
 
 And also modify the size of the bootstrapped sample pool that the confidence intervals
 are taken from:
 
 	# bootstrap 20,000 samples instead of only 10,000
-	ci(experiment1, scipy.mean, n_samples=20000)
+	CIs = ci(experiment1, scipy.mean, n_samples=20000)
+	"Bootstrapped 95% confidence interval low:", CIs[0], ", high:", CIs[1]
+	
+> Bootstrapped 95% confidence interval low: 14.2447813408 , high: 18.2276982261
 	
 Generally, bootstrapped 95% confidence intervals provide more accurate confidence
-intervals than 95% confidence intervals computed from the S.E.M.
+intervals than 95% confidence intervals estimated from the S.E.M.
 
-### Python's pandas Module
+## Python's pandas Module
 
 The pandas module provides powerful, efficient, R-like DataFrame objects capable of
 calculating statistics en masse on the entire DataFrame. DataFrames are very useful
@@ -429,24 +541,22 @@ for when you need to compute statistics over multiple replicate runs.
 For the purposes of this tutorial, `experimentList` and `experimentDF` shall be assigned
 by the following Python code:
 
-	from pandas import *
-	import glob
+	import pandas
+	import numpy as np
 	
 	experimentList = []
-  	
-  	# read all of the csv files into a list of DataFrames
-    for datafile in glob.glob("*.csv"):
-  
-        experimentList.append(read_csv(datafile))
-    
-    # concatenate all of the DataFrames together into a single DataFrame,
-    # then group the data by columns
-    experimentDF = (concat(experimentList, axis=1, keys=range(len(dataLists[key])))
-            		.swaplevel(0, 1, axis=1)
-            		.sortlevel(axis=1)
-            		.groupby(level=0, axis=1)
+	
+	for replicate in range(30):
+		
+		experimentList.append(pandas.DataFrame(np.random.rand(600, 10),
+						columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']))
+	
+	experimentDF = (pandas.concat(experimentList, axis=1, keys=range(len(experimentList)))
+			 .swaplevel(0, 1, axis=1)
+			 .sortlevel(axis=1)
+			 .groupby(level=0, axis=1))
 
-#### Mean
+### Mean
 
 Conveniently, DataFrames have all kinds of built-in functions to perform standard
 operations on them en masse: `add()`, `sub()`, `mul()`, `div()`, `mean()`, `std()`, etc.
@@ -458,7 +568,7 @@ Thus, computing the mean of an entire DataFrame only takes one line of code:
 
 	meanDF = experimentDF.mean()
 
-#### Variance
+### Variance
 
 Computing the variance is similarly easy:
 
@@ -466,7 +576,7 @@ Computing the variance is similarly easy:
 
 	varianceDF = experimentDF.var()
 
-#### Standard Error of the Mean (S.E.M.)
+### Standard Error of the Mean (S.E.M.)
 
 Since DataFrames don't have a built-in S.E.M. function, you have to compute it yourself:
 
@@ -482,15 +592,61 @@ Since DataFrames don't have a built-in S.E.M. function, you have to compute it y
 	# 95% confidence interval around the mean = 1.96 * standard error
 	confidenceIntervalDF = standardErrorDF.mul(1.96)
 
-#### NumPy/SciPy methods on pandas DataFrames
+### Accessing specific data columns
+
+Data from specific columns of the DataFrame can be accessed by indexing the DataFrame
+with the column name.
+
+	print confidenceIntervalDF["C"]
+	
+> 0     0.114974
+> 1     0.096842
+> 2     0.107527
+> 3     0.095829
+> 4     0.103239
+> 5     0.102268
+> 6     0.098333
+> 7     0.102555
+> 8     0.104940
+> 9     0.127890
+> 10    0.119824
+> 11    0.110450
+> 12    0.108072
+> 13    0.099324
+> 14    0.102238
+> ...
+> 585    0.122916
+> 586    0.105350
+> 587    0.102912
+> 588    0.089611
+> 589    0.107591
+> 590    0.089419
+> 591    0.101189
+> 592    0.108616
+> 593    0.086157
+> 594    0.096727
+> 595    0.111009
+> 596    0.109768
+> 597    0.087983
+> 598    0.101010
+> 599    0.087999
+> Name: C, Length: 600
+
+### NumPy/SciPy methods on pandas DataFrames
 
 Finally, NumPy and SciPy methods can be applied directly to pandas DataFrames with the
 `aggregate()` function.
 
 	import numpy as np
-
-	meanDF = experimentDF.aggregate(np.mean)
+	from scipy import stats as st
 	
-	varianceDF = experimentDF.aggregate(np.var)
+	# mean
+	meanDF = experimentDF.aggregate((lambda x: np.mean(x, axis=1)))
+	
+	# geometric mean
+	geomeanDF = experimentDF.aggregate((lambda x: st.gmean(x, axis=1)))
+	
+	# standard error of the mean
+	semDF = experimentDF.aggregate((lambda x: st.sem(x, axis=1)))
 	
 	# etc.
