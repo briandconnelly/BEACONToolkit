@@ -30,25 +30,25 @@ included, that element is interpreted as text.
 Because CSV files arrange data in a tabular format, each element shares some
 relationship with the corresponding element in other records. In other words,
 the elements along each column should contain data corresponding to the same
-aspect of whatever is being recorded in the dataset.  In the example data
+aspect of whatever is being recorded in the data set.  In the example data
 above, the first element in each record represents the phenotype of the
 organism for which the measurement was taken.
 
 ## Annotating CSV Files
 
-To make datasets easier to understand, *metadata*, or additional information
+To make data sets easier to understand, *metadata*, or additional information
 about the data, can be added through the use of *headers* and *comments*.  A
-header row is used to describe the data stored in each column of a dataset.
+header row is used to describe the data stored in each column of a data set.
 Although there is no official specification, many software packages that
 support headers expect them to be on the first line of the file.
 
 Comments allow CSV files to contain additional notes about the data, such as a
-description of when and where the data were acquired, how the dataset was
+description of when and where the data were acquired, how the data set was
 obtained, or any remarks about a specific data point.  Comments are identified
 by a single character, typically `#`, at the beginning of a line, and specify
 that all subsequent text on that line should be ignored.  For comments that
 span multiple lines, a comment character must be included at the beginning of
-each line.  The following dataset includes both headers and comments:
+each line.  The following data set includes both headers and comments:
 
     Temperature,Row,Column,Luminescence
     # Luminescence of evolved V. harveyi
@@ -207,7 +207,7 @@ Excel is a great tool for creating CSV files and for doing quick analyses, but
 often using another tool built specifically for data manipulation and analysis
 will prove useful. Using R (or Python) for your data needs has many advantages
 including the ability to save analysis scripts so they can be applied to new or
-different datasets easily, and a large open-source community constantly
+different data sets easily, and a large open-source community constantly
 contributing new packages. The R language is particularly well suited for data
 analysis since it was originally written by statisticians, and they still make
 up a large user-base. 
@@ -240,7 +240,7 @@ there using the `list.files` function. R is not meant to be a replacement for
 the terminal or file browser, but this quick way of viewing the contents of a
 directory is helpful when you forget the exact name of the file you want to
 load. If we run this function with our working directory set to the
-`BEACONToolkit/csv/data` directory, we should see our two example datasets:
+`BEACONToolkit/csv/data` directory, we should see our two example data sets:
 
     list.files()
 	
@@ -256,7 +256,7 @@ in R, we simply run the following command:
     lum_data <- read.csv('luminescence.csv')
 
 But if we take a look at this data, we can see there is a problem. The `head`
-function will list the first few rows of a dataset, and it is often good
+function will list the first few rows of a data set, and it is often good
 practice to always run this just to make sure there were no problems importing
 the data.  Running `summary` will give you some statistical summaries of the
 data, which is good for making sure the min and max values of your data make
@@ -307,7 +307,7 @@ another look at our data, it is correctly being imported by R.
 Now that we have our dataframe, we can start pulling out data and manipulating
 it using R. The simplest way to access data is by pulling out an entire column.
 In R, we can access particular columns using the `$` operator, which extracts
-data from objects. To pull out the Luminescence column from our dataset, we
+data from objects. To pull out the Luminescence column from our data set, we
 simply run:
 
     lum_data$Luminescence
@@ -392,7 +392,7 @@ modified some data but forgot to assign it to a variable and don't want to
 start over, you can retrieve it.
 
     edit(lum_data)
-	# Oh no! I didn't save the edited dataset!
+    # Oh no! I didn't save the edited data set!
 	
 	new_data <- .Last.value
 	# phew!
@@ -540,7 +540,7 @@ example, to calculate the average luminescence for our data:
     avg_luminescence = sum(luminescence)/len(luminescence)
 
 Using techniques like this, we can easily generate statics for or create plots
-of columns in a dataset.
+of columns in a data set.
 
 ### Writing
 
@@ -558,12 +558,12 @@ write rows of data to the file using the `writerow` method:
     mywriter.writerow(data)
 
 As a complete example of using the `csv` module, let's use the
-`avida_reactions.csv` dataset, which contains the total number of times that
+`avida_reactions.csv` data set, which contains the total number of times that
 each of nine reactions has been completed over the last 100 updates. For each
 record, we will add a new column that contains the total number of reactions
 completed in that period of time, and a column that indicates the change in
-reactions completed from the previous period of time. We will save the new
-dataset as `avida_reactions_modified.csv`.
+reactions completed from the previous period of time. We will save the new dat
+aset as `avida_reactions_modified.csv`.
 
     import csv
     import re
@@ -636,7 +636,7 @@ note that the comment character can not appear in a record, even as part of a
 string.
 
 The resulting `mydata` will be an array containing a row for each record in the
-dataset and a column for each field. Using indices, we can then obtain
+data set and a column for each field. Using indices, we can then obtain
 specific rows, columns, or cells:
 
     col3 = mydata[:,3]      # Extract the fourth column
@@ -655,7 +655,7 @@ will be `nan`. To limit the columns included in the array, the optional
 Sometimes, it is easier to indicate a column by name rather than number. This
 can be done using the `names` argument, which allows columns to be referred to
 by the name set in the header. The following example uses this to quickly
-calculate the average luminescence of the dataset:
+calculate the average luminescence of the data set:
 
     mydata = np.genfromtxt('luminescence.csv', delimiter=',',
                            comments='#', names=True)
@@ -676,8 +676,8 @@ column) of the reading is greater than 30:
 
 `mydata[:,2] > 30` returns a list containing `True` and `False` values
 indicating whether or not the criterion is met. By using this list to index the
-dataset, we find the entries for which the condition is satisfied. Subsets are
-a very powerful way to look at different pieces of the dataset.
+data set, we find the entries for which the condition is satisfied. Subsets are
+a very powerful way to look at different pieces of the data set.
 
 We've already seen how specific rows, columns, and elements can be addressed
 when using indices. The process is similar when using named columns:

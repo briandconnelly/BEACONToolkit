@@ -3,45 +3,48 @@
 ### What p-values aren't
 
 Before we can get into analyzing data with computational tools, we first need
-to understand a few basics about probability and statistics. Let's take a
-totally fictitious example of fish. Maybe we expect a particular species of
-fish to have evolved larger bodies in cold environments but not hot ones. We
-can start by looking at the distributions of weight between samples of fish
-caught in these two different environments.
+to understand a few basics about probability and statistics. Perhaps nothing is
+used more frequently in statistics than the p-value, which is used to reject
+some null hypothesis. To examine the p-value, let's take a totally fictitious
+example of fish. Maybe we expect a particular species of fish to have evolved
+larger bodies in cold environments but not hot ones. We can start by looking at
+the distributions of weight between samples of fish caught in these two
+different environments.
 
 	cold_fish = rnorm(5000, mean=20.5, sd=5)
 	hot_fish = rnorm(5000, mean=20, sd=5)
 	
 ![Weight Boxplots](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_boxplot.png)
 
-While this isn't really the analysis I would suggest, it appears there is no
-difference between environments. Perhaps a slight increase in weight in cold
-environments, but no more than a single kilogram. But, it turns out that if we
-do a simple t-test our p-value is very small, less than 0.001.
+Based on this overly-simplistic analysis, there appears to be no difference
+between environments. There may be a slight increase in weight in cold
+environments, but no more than a single kilogram. However, it turns out that if
+we do a simple t-test, our p-value is very small, less than 0.001.
 
 	t.test(a,b)
 	
 	#output
 	t = 4.0446, df = 9997.997, p-value = 5.281e-05
 
-The point I'm trying to illustrate here is that p-values, while often important
-for publication, tell you very little about what is actually important. In this
-case, the p-value is so small because we have so many samples. The slight
-difference is real and the p-value reflects that, but less than one kilogram
-difference has no biological meaning. Instead of thinking primarily about
-p-values, you should think about effect sizes and what they mean for your
-hypotheses. 
+The point of this example is to demonstrate that p-values, which are often
+considered an absolute must for presenting results, can reveal very little
+about what is actually important. In this case, the p-value is so small because
+we have so many samples. The slight difference is real and the p-value reflects
+that, but less than one kilogram difference has no biological meaning. Instead
+of thinking primarily about p-values, you should think about effect sizes and
+what they mean for your hypotheses. 
 
 ### What p-values are
 
 So what does a p-value tell you then? The p-value is simply the probability of
-observing as extreme data under the null hypothesis. The null hypothesis
-usually ends up being that the slope is 0, or the mean is 0, or the difference
-between two samples is 0. We can demonstrate what exactly that means by
-computing the p-value of a sample, with the null hypothesis that the true mean
-is equal to zero, by resampling our data over and over again and counting the
-number of times we observe a mean less than or equal to zero. This technique is
-called bootstrapping and sometimes more generally resampling. 
+observing data as extreme as those seen in your data set under the null
+hypothesis. The null hypothesis usually ends up being that the slope is 0, the
+mean is 0, or the difference between two samples is 0. We can demonstrate what
+exactly that means by computing the p-value of a sample, with the null
+hypothesis that the true mean is equal to zero, by resampling our data over and
+over and counting the number of times we observe a mean less than or equal to
+zero. This technique is called *bootstrapping* or sometimes, more generally,
+*resampling*. 
 
 ![New Fake Distribution](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_hist.png)
 
@@ -144,7 +147,7 @@ Now that we have gone over a little bit about what statistics is (and what it
 isn't), we can go through a few of the traditional analysis methods using R.
 For this exercise, there is real data form a few runs of Avida studying
 host-parasite coevolution in `BEACONToolkit/analysis/data/parasite_data.csv`.
-This dataset has the diversity of the final host population using Shannon
+This data set has the diversity of the final host population using Shannon
 Diversity, which balances even distributions of abundance as well as species
 richness, measured at the end of runs with varying levels of parasite
 virulence. Here virulence just means the percentage of CPU cycles, or energy,
@@ -166,7 +169,7 @@ of data.
 	normal_parasites <-  parasite_data[na.omit(parasite_data$Virulence == 0.8), ]
 	
 We use `na.omit` because there are some Virulence values that are NA, or not
-present in the dataset. These are runs that do not have parasites, and we
+present in the data set. These are runs that do not have parasites, and we
 should hold on to those too as a control.
 
 	no_parasites <- parasite_data[is.na(parasite_data$Virulence), ]
