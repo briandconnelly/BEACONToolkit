@@ -335,6 +335,65 @@ numbers:
 >   13.06743069  22.83800346  30.86368     17.37685739  16.56721256
 >   22.23323283  26.31665391  23.87633505  19.18316128  28.03331025]
 
+### Blank data (NA or NaN) in SciPy
+
+In some cases, you may have incomplete data sets that have NA/NaN entries.
+In SciPy, you must take care of these values beforehand, otherwise the SciPy
+methods won't work properly.
+
+	import numpy as np
+	
+	# generate random data set
+	dataWithNA = np.random.normal(50, 10, 30)
+	
+	# change some values to NaN
+	dataWithNA[np.random.randint(30, size=10)] = NaN
+	
+	print dataWithNA
+	
+>[ 57.17477018          nan          nan  38.88442441  53.26187838
+>  39.26878122  52.59868697          nan  58.52987641          nan
+>  62.68108197  56.48582895          nan  47.96388655          nan
+>  49.27718868  36.58331036          nan  47.4569696   58.54026091
+>  36.36989608  65.4814682           nan          nan  51.53795346
+>  56.97393433          nan  56.03977719  43.18878846  60.36520503]
+
+	import scipy
+	
+	# mean doesn't work with NaN values!
+	print "mean =", scipy.mean(dataWithNA)
+	
+>mean = nan
+
+There are two options for handling NA/NaN values:
+
+**(1) filter out all of the entries with NA/NaN**
+
+	import scipy
+	
+	# isfinite() returns the list of all non-NaN, non-infinity values
+	dataWithoutNA = dataWithNA[scipy.isfinite(dataWithNA)]
+	
+	# mean works fine now
+	print "mean =", scipy.mean(dataWithoutNA)
+	
+>mean = 51.433198367
+
+**(2) replace all of the NA/NaN entries with a valid value**
+
+	import scipy
+	
+	# nan_to_num replaces NaN with 0.0
+	dataWithNAReplaced = scipy.nan_to_num(dataWithNA)
+	
+	print "mean =", scipy.mean(dataWithNAReplaced)
+	
+>mean = 34.2887989114
+
+**NOTE**: See how the mean is different between methods 1 and 2? Take care
+when deciding what to do with NA/NaN entries. It can have a significant impact
+on your results!
+
 ### Mean
 
 The mean performance of an experiment gives a good idea of how the experiment
@@ -658,6 +717,88 @@ assigned by the following Python code:
 			 .sortlevel(axis=1)
 			 .groupby(level=0, axis=1))
 
+### Blank data (NA or NaN) in pandas
+
+Blank data is even easier to handle in pandas. Here's an example data set
+with NA/NaN values.
+
+	import pandas
+	import numpy as np
+	
+	experimentDFWithNA = pandas.DataFrame(np.random.rand(10, 3),
+											columns = ['A', 'B', 'C'])
+	
+	experimentDFWithNA["A"][np.random.randint(10, size=3)] = NaN
+	experimentDFWithNA["B"][np.random.randint(10, size=3)] = NaN
+	experimentDFWithNA["C"][np.random.randint(10, size=3)] = NaN
+	
+	print experimentDFWithNA
+	
+>          A         B         C
+>0       NaN  0.523578       NaN
+>1  0.146291  0.282076  0.654592
+>2  0.784701       NaN  0.142801
+>3  0.847388  0.495618  0.532171
+>4  0.698493       NaN  0.215417
+>5  0.834346       NaN  0.451721
+>6       NaN  0.589255  0.658829
+>7  0.866298  0.129788  0.666024
+>8  0.694930  0.156945  0.420747
+>9       NaN  0.572037  0.970791
+
+DataFrame methods automatically ignore NA/NaN values.
+
+	print experimentDFWithNA.sum()
+	
+>A    4.872448
+>B    2.749297
+>C    4.713094
+
+However, not all methods in Python are guaranteed to handle NA/NaN values. Thus,
+it behooves you to take care of the NA/NaN values before performing your analysis.
+You can either:
+
+**(1) filter out all of the entries with NA/NaN**
+
+	# NOTE: this drops the entire row if any of its entries are NA/NaN!
+	print experimentDFWithNA.dropna()
+	
+>          A         B         C
+>1  0.146291  0.282076  0.654592
+>3  0.847388  0.495618  0.532171
+>7  0.866298  0.129788  0.666024
+>8  0.694930  0.156945  0.420747
+
+If you only care about NA/NaN values in a specific column, you can specify
+the column name first.
+
+	print aexperimentDFWithNA["B"].dropna()
+	
+>0    0.523578
+>1    0.282076
+>3    0.495618
+>6    0.589255
+>7    0.129788
+>8    0.156945
+>9    0.572037
+>Name: B
+
+**(2) replace all of the NA/NaN entries with a valid value**
+
+	print experimentDFWithNA.fillna(0.0)
+	
+>         A         B         C
+>0  0.000000  0.523578  0.000000
+>1  0.146291  0.282076  0.654592
+>2  0.784701  0.000000  0.142801
+>3  0.847388  0.495618  0.532171
+>4  0.698493  0.000000  0.215417
+>5  0.834346  0.000000  0.451721
+>6  0.000000  0.589255  0.658829
+>7  0.866298  0.129788  0.666024
+>8  0.694930  0.156945  0.420747
+>9  0.000000  0.572037  0.970791
+
 ### Mean
 
 Conveniently, DataFrames have all kinds of built-in functions to perform
@@ -696,46 +837,6 @@ yourself:
 	# 95% confidence interval around the mean = 1.96 * standard error
 	confidenceIntervalDF = standardErrorDF.mul(1.96)
 
-### Accessing specific data columns
-
-Data from specific columns of the DataFrame can be accessed by indexing the
-DataFrame with the column name.
-
-	print confidenceIntervalDF["C"]
-	
-> 0     0.114974
-> 1     0.096842
-> 2     0.107527
-> 3     0.095829
-> 4     0.103239
-> 5     0.102268
-> 6     0.098333
-> 7     0.102555
-> 8     0.104940
-> 9     0.127890
-> 10    0.119824
-> 11    0.110450
-> 12    0.108072
-> 13    0.099324
-> 14    0.102238
-> ...
-> 585    0.122916
-> 586    0.105350
-> 587    0.102912
-> 588    0.089611
-> 589    0.107591
-> 590    0.089419
-> 591    0.101189
-> 592    0.108616
-> 593    0.086157
-> 594    0.096727
-> 595    0.111009
-> 596    0.109768
-> 597    0.087983
-> 598    0.101010
-> 599    0.087999
-> Name: C, Length: 600
-
 ### NumPy/SciPy methods on pandas DataFrames
 
 Finally, NumPy and SciPy methods can be applied directly to pandas DataFrames
@@ -750,7 +851,7 @@ with the `aggregate()` function.
 	# geometric mean
 	geomeanDF = experimentDF.aggregate((lambda x: st.gmean(x, axis=1)))
 	
-	# standard error of the mean
+	# much easier way to compute standard error of the mean
 	semDF = experimentDF.aggregate((lambda x: st.sem(x, axis=1)))
 	
 	# etc.
