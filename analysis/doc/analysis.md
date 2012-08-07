@@ -300,284 +300,792 @@ for our differences in means!
 
 ## Statistical Analysis in Python
 
-In this section, we introduce a few useful methods for analyzing your data in
-Python.  Namely, we cover how to compute the mean, variance, and standard error
-from a data set.  For more advanced statistical analysis, we cover how to
-perform a Mann-Whitney-Wilcoxon (MWW) RankSum test, how to perform an Analysis
-of variance (ANOVA) between multiple distributions, and how to compute
-bootstrapped 95% confidence intervals for non-normally distributed data.
+In this section, we introduce a few useful methods for analyzing your data in Python.
+Namely, we cover how to compute the mean, variance, and standard error of a data set.
+For more advanced statistical analysis, we cover how to perform a
+Mann-Whitney-Wilcoxon (MWW) RankSum test, how to perform an Analysis of variance (ANOVA)
+between multiple data sets, and how to compute bootstrapped 95% confidence intervals for
+non-normally distributed data sets.
 
 ### Python's SciPy Module
 
-The majority of data analysis in Python can be performed with the SciPy module.
-SciPy provides a plethora of statistical functions and tests that will handle
-the majority of your analytical needs. If we don't cover a statistical function
-or test that you require for your research, SciPy's full statistical library is
-described in detail at:
+The majority of data analysis in Python can be performed with the SciPy module. SciPy
+provides a plethora of statistical functions and tests that will handle the majority of
+your analytical needs. If we don't cover a statistical function or test that you require
+for your research, SciPy's full statistical library is described in detail at:
 http://docs.scipy.org/doc/scipy/reference/tutorial/stats.html
 
-In the examples below, `dataset_list` represents the list of data that you wish
-to analyze. e.g., `dataset_list` could be a list of 30 best fitness values from
-30 replicate runs of an Avida experiment. For the purposes of those following
-along with the examples, `dataset_list` will be a set of normally-distributed
-numbers:
+### Python's pandas Module
 
-	import numpy as np
+The pandas module provides powerful, efficient, R-like DataFrame objects capable of
+calculating statistics en masse on the entire DataFrame. DataFrames are useful for when
+you need to compute statistics over multiple replicate runs.
 
-	dataset_list = np.random.normal(20, 5, 30)
+For the purposes of this tutorial, we will use Luis' parasite data set:
+
+	from pandas import *
 	
-	print dataset_list
+	# must specify that blank space " " is NaN
+	experimentDF = read_csv("data-analysis-python/parasite_data.csv", na_values=[" "])
 	
-	[ 29.31616689  17.84990351  18.29067038  22.88000839  11.40115392
- 	  16.25772419  15.06432056   9.95443695  14.96259294  20.85094509
-	  13.48477627  20.03862034  22.71966826  26.49146294  26.41032275
-	  16.87420833  26.74874152  15.24608994  20.19901887  25.9643908
-	  13.06743069  22.83800346  30.86368     17.37685739  16.56721256
-	  22.23323283  26.31665391  23.87633505  19.18316128  28.03331025]
-
-### Blank data (NA or NaN) in SciPy
-
-In some cases, you may have incomplete data sets that have NA/NaN entries.
-In SciPy, you must take care of these values beforehand, otherwise the SciPy
-methods won't work properly.
-
-	import numpy as np
+	print experimentDF
 	
-	# generate random data set
-	dataWithNA = np.random.normal(50, 10, 30)
-	
-	# change some values to NaN
-	dataWithNA[np.random.randint(30, size=10)] = NaN
-	
-	print dataWithNA
-	
-	[ 57.17477018          nan          nan  38.88442441  53.26187838
-	  39.26878122  52.59868697          nan  58.52987641          nan
-	  62.68108197  56.48582895          nan  47.96388655          nan
-	  49.27718868  36.58331036          nan  47.4569696   58.54026091
-	  36.36989608  65.4814682           nan          nan  51.53795346
-	  56.97393433          nan  56.03977719  43.18878846  60.36520503]
+	<class 'pandas.core.frame.DataFrame'>
+	Int64Index: 350 entries, 0 to 349
+	Data columns:
+	Virulence           300  non-null values
+	Replicate           350  non-null values
+	ShannonDiversity    350  non-null values
+	dtypes: float64(2), int64(1)
 
-	import scipy
+### Accessing data in pandas DataFrames
+
+You can directly access any column and row by indexing the DataFrame.
+
+	# show all entries in the Virulence column
+	print experimentDF["Virulence"]
 	
-	# mean doesn't work with NaN values!
-	print "mean =", scipy.mean(dataWithNA)
+	0     0.5
+	1     0.5
+	2     0.5
+	3     0.5
+	4     0.5
+	5     0.5
+	6     0.5
+	7     0.5
+	8     0.5
+	9     0.5
+	10    0.5
+	11    0.5
+	12    0.5
+	13    0.5
+	14    0.5
+	...
+	335   NaN
+	336   NaN
+	337   NaN
+	338   NaN
+	339   NaN
+	340   NaN
+	341   NaN
+	342   NaN
+	343   NaN
+	344   NaN
+	345   NaN
+	346   NaN
+	347   NaN
+	348   NaN
+	349   NaN
+	Name: Virulence, Length: 350
 	
-	mean = nan
-
-There are two options for handling NA/NaN values:
-
-**(1) filter out all of the entries with NA/NaN**
-
-	import scipy
+	# show the 12th row in the ShannonDiversity column
+	print experimentDF["ShannonDiversity"][12]
 	
-	# isfinite() returns the list of all non-NaN, non-infinity values
-	dataWithoutNA = dataWithNA[scipy.isfinite(dataWithNA)]
+	1.58981
 	
-	# mean works fine now
-	print "mean =", scipy.mean(dataWithoutNA)
+You can also access all of the values in a column meeting a certain criteria.
+
+	# show all entries in the ShannonDiversity column > 2.0
+	print experimentDF[experimentDF["ShannonDiversity"] > 2.0]
 	
-	mean = 51.433198367
+	     Virulence  Replicate  ShannonDiversity
+	8          0.5          9           2.04768
+	89         0.6         40           2.01066
+	92         0.6         43           2.90081
+	96         0.6         47           2.02915
+	105        0.7          6           2.23427
+	117        0.7         18           2.14296
+	127        0.7         28           2.23599
+	129        0.7         30           2.48422
+	133        0.7         34           2.18506
+	134        0.7         35           2.42177
+	139        0.7         40           2.25737
+	142        0.7         43           2.07258
+	148        0.7         49           2.38326
+	151        0.8          2           2.07970
+	153        0.8          4           2.38474
+	163        0.8         14           2.03252
+	165        0.8         16           2.38415
+	170        0.8         21           2.02297
+	172        0.8         23           2.13882
+	173        0.8         24           2.53339
+	182        0.8         33           2.17865
+	196        0.8         47           2.07718
+	208        0.9          9           2.12240
+	209        0.9         10           2.46144
+	212        0.9         13           2.20476
+	229        0.9         30           2.28026
+	235        0.9         36           2.19565
+	237        0.9         38           2.16535
+	243        0.9         44           2.17578
+	251        1.0          2           2.16044
 
-**(2) replace all of the NA/NaN entries with a valid value**
+### Blank/omitted data (NA or NaN) in pandas DataFrames
 
-	import scipy
+Blank/omitted data is a piece of cake to handle in pandas. Here's an example data
+set with NA/NaN values.
+
+	print experimentDF[isnan(experimentDF["Virulence"])]
 	
-	# nan_to_num replaces NaN with 0.0
-	dataWithNAReplaced = scipy.nan_to_num(dataWithNA)
+		 Virulence  Replicate  ShannonDiversity
+	300        NaN          1          0.000000
+	301        NaN          2          0.000000
+	302        NaN          3          0.833645
+	303        NaN          4          0.000000
+	304        NaN          5          0.990309
+	305        NaN          6          0.000000
+	306        NaN          7          0.000000
+	307        NaN          8          0.000000
+	308        NaN          9          0.061414
+	309        NaN         10          0.316439
+	310        NaN         11          0.904773
+	311        NaN         12          0.884122
+	312        NaN         13          0.000000
+	313        NaN         14          0.000000
+	314        NaN         15          0.000000
+	315        NaN         16          0.000000
+	316        NaN         17          0.013495
+	317        NaN         18          0.882519
+	318        NaN         19          0.000000
+	319        NaN         20          0.986830
+	320        NaN         21          0.000000
+	321        NaN         22          0.000000
+	322        NaN         23          0.000000
+	323        NaN         24          0.000000
+	324        NaN         25          0.000000
+	325        NaN         26          0.000000
+	326        NaN         27          1.702720
+	327        NaN         28          0.169556
+	328        NaN         29          0.949750
+	329        NaN         30          0.240084
+	330        NaN         31          0.925913
+	331        NaN         32          0.000000
+	332        NaN         33          0.693356
+	333        NaN         34          0.000000
+	334        NaN         35          0.310170
+	335        NaN         36          0.000000
+	336        NaN         37          0.000000
+	337        NaN         38          0.000000
+	338        NaN         39          0.000000
+	339        NaN         40          0.000000
+	340        NaN         41          0.000000
+	341        NaN         42          0.000000
+	342        NaN         43          0.000000
+	343        NaN         44          0.000000
+	344        NaN         45          0.391061
+	345        NaN         46          0.001669
+	346        NaN         47          0.000000
+	347        NaN         48          0.444463
+	348        NaN         49          0.383512
+	349        NaN         50          0.511329
 	
-	print "mean =", scipy.mean(dataWithNAReplaced)
+DataFrame methods automatically ignore NA/NaN values.
+
+	print "Mean virulence across all treatments:", experimentDF["Virulence"].mean()
 	
-	mean = 34.2887989114
+	Mean virulence across all treatments: 0.75
 
-**NOTE**: See how the mean is different between methods 1 and 2? Take care
-when deciding what to do with NA/NaN entries. It can have a significant impact
-on your results!
-
-### Mean
-
-The mean performance of an experiment gives a good idea of how the experiment
-will turn out *on average* under a given treatment.
-
-	import scipy
-
-	dataset_mean = scipy.mean(dataset_list)
-	
-	print "Dataset mean:", dataset_mean
-	
-	Dataset mean: 20.378703342
-
-### Variance
-
-The variance in the performance provides a measurement of how consistent the
-results of an experiment are. The lower the variance, the more consistent the
-results are, and vice versa.
-
-	import scipy
-	
-	dataset_variance = scipy.var(dataset_list)
-	
-	print "Variance around the mean:", dataset_variance
-	
-	Variance around the mean: 30.0722365196
-
-### Standard Error of the Mean (SEM)
-
-Combined with the mean, the SEM enables you to establish a range around a mean
-that the majority of any future replicate experiments will most likely fall
-within.
+However, not all methods in Python are guaranteed to handle NA/NaN values properly.
 
 	from scipy import stats
 
-	dataset_stderr = 1.96 * stats.sem(dataset_list)
+	print "Mean virulence across all treatments:", stats.sem(experimentDF["Virulence"])
 	
-	print "Standard error of the mean:", dataset_stderr
-	
-	Standard error of the mean: 1.99590532404
+	Mean virulence across all treatments: nan
 
-A single SEM will usually envelop 68% of the possible replicate means and two
-SEMs envelop 95% of the possible replicate means. Two SEMs are called the
-"estimated 95% confidence interval." The confidence interval is estimated
-because the exact width depend on how many replicates you have; this
-approximation is good when you have more than 20 replicates.
+Thus, it behooves you to take care of the NA/NaN values before performing your analysis.
+You can either:
+
+**(1) filter out all of the entries with NA/NaN**
+
+	# NOTE: this drops the entire row if any of its entries are NA/NaN!
+	print experimentDF.dropna()
+	
+	<class 'pandas.core.frame.DataFrame'>
+	Int64Index: 300 entries, 0 to 299
+	Data columns:
+	Virulence           300  non-null values
+	Replicate           300  non-null values
+	ShannonDiversity    300  non-null values
+	dtypes: float64(2), int64(1)
+	
+If you only care about NA/NaN values in a specific column, you can specify the
+column name first.
+
+	print experimentDF["Virulence"].dropna()
+	
+	0     0.5
+	1     0.5
+	2     0.5
+	3     0.5
+	4     0.5
+	5     0.5
+	6     0.5
+	7     0.5
+	8     0.5
+	9     0.5
+	10    0.5
+	11    0.5
+	12    0.5
+	13    0.5
+	14    0.5
+	...
+	285    1
+	286    1
+	287    1
+	288    1
+	289    1
+	290    1
+	291    1
+	292    1
+	293    1
+	294    1
+	295    1
+	296    1
+	297    1
+	298    1
+	299    1
+	Name: Virulence, Length: 300
+	
+**(2) replace all of the NA/NaN entries with a valid value**
+
+	print experimentDF.fillna(0.0)["Virulence"]
+	
+	0     0.5
+	1     0.5
+	2     0.5
+	3     0.5
+	4     0.5
+	5     0.5
+	6     0.5
+	7     0.5
+	8     0.5
+	9     0.5
+	10    0.5
+	11    0.5
+	12    0.5
+	13    0.5
+	14    0.5
+	...
+	335    0
+	336    0
+	337    0
+	338    0
+	339    0
+	340    0
+	341    0
+	342    0
+	343    0
+	344    0
+	345    0
+	346    0
+	347    0
+	348    0
+	349    0
+	Name: Virulence, Length: 350
+	
+Take care when deciding what to do with NA/NaN entries. It can have a significant
+impact on your results!
+
+	print "Mean virulence across all treatments w/ dropped NaN:", experimentDF["Virulence"].dropna().mean()
+	
+	print "Mean virulence across all treatments w/ filled NaN:", experimentDF.fillna(0.0)["Virulence"].mean()
+	
+	Mean virulence across all treatments w/ dropped NaN: 0.75
+	Mean virulence across all treatments w/ filled NaN: 0.642857142857
+	
+### Mean
+
+The mean performance of an experiment gives a good idea of how the experiment will
+turn out *on average* under a given treatment.
+
+Conveniently, DataFrames have all kinds of built-in functions to perform standard
+operations on them en masse: `add()`, `sub()`, `mul()`, `div()`, `mean()`, `std()`, etc.
+The full list is located at: http://pandas.sourceforge.net/generated/pandas.DataFrame.html
+
+Thus, computing the mean of a DataFrame only takes one line of code:
+
+	from pandas import *
+	
+	print "Mean Shannon Diversity w/ 0.8 Parasite Virulence =", experimentDF[experimentDF["Virulence"] == 0.8]["ShannonDiversity"].mean()
+	
+	Mean Shannon Diversity w/ 0.8 Parasite Virulence = 1.2691338188
+	
+### Variance
+
+The variance in the performance provides a measurement of how consistent the results
+of an experiment are. The lower the variance, the more consistent the results are, and
+vice versa.
+
+Computing the variance is also built in to pandas DataFrames:
+
+	from pandas import *
+	
+	print "Variance in Shannon Diversity w/ 0.8 Parasite Virulence =", experimentDF[experimentDF["Virulence"] == 0.8]["ShannonDiversity"].var()
+	
+	Variance in Shannon Diversity w/ 0.8 Parasite Virulence = 0.611038433313
+	
+### Standard Error of the Mean (SEM)
+
+Combined with the mean, the SEM enables you to establish a range around a mean that
+the majority of any future replicate experiments will most likely fall within.
+
+pandas DataFrames don't have methods like SEM built in, but since DataFrame
+rows/columns are treated as lists, you can use any NumPy/SciPy method you like on them.
+
+	from pandas import *
+	from scipy import stats
+	
+	print "SEM of Shannon Diversity w/ 0.8 Parasite Virulence =", stats.sem(experimentDF[experimentDF["Virulence"] == 0.8]["ShannonDiversity"])
+	
+	SEM of Shannon Diversity w/ 0.8 Parasite Virulence = 0.110547585529
+	
+A single SEM will usually envelop 68% of the possible replicate means
+and two SEMs envelop 95% of the possible replicate means. Two
+SEMs are called the "estimated 95% confidence interval." The confidence
+interval is estimated because the exact width depend on how many replicates
+you have; this approximation is good when you have more than 20 replicates.
 
 ### Mann-Whitney-Wilcoxon (MWW) RankSum test
 
-The MWW RankSum test is a useful test to determine if two distributions are
-significantly different or not. Unlike the t-test, the RankSum test does not
-assume that the data are normally distributed, potentially providing a more
-accurate assessment of the data sets.
+The MWW RankSum test is a useful test to determine if two distributions are significantly
+different or not. Unlike the t-test, the RankSum test does not assume that the data
+are normally distributed, potentially providing a more accurate assessment of the data sets.
 
-As an example, let's say we want to determine if the results of the two
-following experiments significantly differ or not:
+As an example, let's say we want to determine if the results of the two following
+treatments significantly differ or not:
 
-	import numpy as np
+	# select two treatment data sets from the parasite data
+	treatment1 = experimentDF[experimentDF["Virulence"] == 0.5]["ShannonDiversity"]
+	treatment2 = experimentDF[experimentDF["Virulence"] == 0.8]["ShannonDiversity"]
 	
-	# create random set of numbers between 0 and 10
-	experiment1 = np.random.rand(1, 50) * 10
-	experiment2 = np.random.rand(1, 50) * 10
+	print "Data set 1:\n", treatment1
+	print "Data set 2:\n", treatment2
 	
-	print experiment1
+	Data set 1:
+	0     0.059262
+	1     1.093600
+	2     1.139390
+	3     0.547651
+	4     0.065928
+	5     1.344330
+	6     1.680480
+	7     0.000000
+	8     2.047680
+	9     0.000000
+	10    1.507140
+	11    0.000000
+	12    1.589810
+	13    1.144800
+	14    1.011190
+	15    0.000000
+	16    0.776665
+	17    0.001749
+	18    1.761200
+	19    0.021091
+	20    0.790915
+	21    0.000000
+	22    0.018867
+	23    0.994268
+	24    1.729620
+	25    0.967537
+	26    0.457318
+	27    0.992525
+	28    1.506640
+	29    0.697241
+	30    1.790580
+	31    1.787710
+	32    0.857742
+	33    0.000000
+	34    0.445267
+	35    0.045471
+	36    0.003490
+	37    0.000000
+	38    0.115830
+	39    0.980076
+	40    0.000000
+	41    0.820405
+	42    0.124755
+	43    0.719755
+	44    0.584252
+	45    1.937930
+	46    1.284150
+	47    1.651680
+	48    0.000000
+	49    0.000000
+	Name: ShannonDiversity
+	Data set 2:
+	150    1.433800
+	151    2.079700
+	152    0.892139
+	153    2.384740
+	154    0.006980
+	155    1.971760
+	156    0.000000
+	157    1.428470
+	158    1.715950
+	159    0.000000
+	160    0.421927
+	161    1.179920
+	162    0.932470
+	163    2.032520
+	164    0.960912
+	165    2.384150
+	166    1.879130
+	167    1.238890
+	168    1.584300
+	169    1.118490
+	170    2.022970
+	171    0.000000
+	172    2.138820
+	173    2.533390
+	174    1.212340
+	175    0.059135
+	176    1.578260
+	177    1.725210
+	178    0.293153
+	179    0.000000
+	180    0.000000
+	181    1.699600
+	182    2.178650
+	183    1.792580
+	184    1.920800
+	185    0.000000
+	186    1.583250
+	187    0.343235
+	188    1.980010
+	189    0.980876
+	190    1.089380
+	191    0.979254
+	192    1.190450
+	193    1.738880
+	194    1.154100
+	195    1.981610
+	196    2.077180
+	197    1.566410
+	198    0.000000
+	199    1.990900
+	Name: ShannonDiversity
 	
-	[[ 0.60703811  2.02903267  7.77922897  0.72135786  7.60735994  2.55005731
-	   3.75147232  9.92628774  5.84305081  8.70985479  6.24811885  1.90969196
-	   9.10927591  3.01245551  9.06592429  9.56689585  4.48222746  7.44179666
-	   6.24691287  2.23830165  4.35116166  2.84018573  0.08320698  4.36125059
-	   1.4610135   5.86651043  1.89150441  6.24918774  6.57098487  4.29357824
-	   1.5557837   9.63006435  0.71365672  7.11599719  4.02809286  7.65547018
-	   8.82567936  0.54906886  8.55374451  2.57840604  3.20837339  5.73256059
-	   5.7241952   9.35435413  9.35996839  7.01528296  4.66974079  6.09729923
-	   4.84421278  9.62590103]]
-	   
-	print experiment2
-   
-	[[ 5.94954301  4.02512252  5.10857072  0.20204057  8.57127551  7.51061019
-	   7.39677011  9.39687917  9.11026608  9.4898699   9.00727209  8.47904713
-	   1.56610254  0.71595907  8.30823977  5.63675437  3.82638994  3.26857413
-	   4.81009474  5.15329638  0.78554851  8.05647441  4.42453386  7.16148733
-	   5.37506635  6.07097425  1.18304531  4.24637205  0.98300946  3.32876637
-	   2.28266522  4.95443069  5.48805806  5.20826745  1.528031    8.50207874
-	   9.69815007  7.36248269  2.17102453  7.15547992  8.51739963  0.85976576
-	   7.43011228  8.14334652  1.03625833  5.92170905  8.47008621  8.40191409
-	   2.95670326  1.66834695]]
-
-A quick RankSum test will provide a P value indicating whether or not the two
+A RankSum test will provide a P value indicating whether or not the two
 distributions are the same.
 
 	from scipy import stats
 	
-	z_stat, p_val = stats.ranksums(experiment1, experiment2)
+	z_stat, p_val = stats.ranksums(treatment1, treatment2)
 	
-	print "MWW RankSum P for experiments 1 and 2 =", p_val
+	print "MWW RankSum P for treatments 1 and 2 =", p_val
 	
-	MWW RankSum P for experiments 1 and 2 = 5.73303143758e-07
+	MWW RankSum P for treatments 1 and 2 = 0.000983355902735
 	
 If P <= 0.05, we are highly confident that the distributions significantly differ, and
-can claim that the treatment has a significant impact on the measured value.
+can claim that the treatments had a significant impact on the measured value.
 
-If the treatments do *not* significantly differ, we could expect a result such
-as the following:
+If the treatments do *not* significantly differ, we could expect a result such as
+the following:
 
-	# create a set of normally-distributed numbers centered around the same mean
-	experiment3 = np.random.normal(40, 8, 30)
-	experiment4 = np.random.normal(40, 8, 30)
+	treatment3 = experimentDF[experimentDF["Virulence"] == 0.8]["ShannonDiversity"]
+	treatment4 = experimentDF[experimentDF["Virulence"] == 0.9]["ShannonDiversity"]
 	
-	print experiment3
+	print "Data set 3:\n", treatment3
+	print "Data set 4:\n", treatment4
 	
-	[ 57.9564105   37.97638507  40.65139054  55.43770779  49.52670648
-	  39.17122622  48.87309287  31.08453766  47.93442482  48.22312111
-	  51.93581354  58.72188138  39.82392081  37.0940381   37.61361859
-	  50.62734137  44.41113408  10.27225975  43.62763019  29.33972703
-	  44.71846967  38.80722083  44.86990128  36.50444083  41.35612323
-	  48.47557548  46.86753584  34.36680173  41.29560205  42.72153454]
+	Data set 3:
+	150    1.433800
+	151    2.079700
+	152    0.892139
+	153    2.384740
+	154    0.006980
+	155    1.971760
+	156    0.000000
+	157    1.428470
+	158    1.715950
+	159    0.000000
+	160    0.421927
+	161    1.179920
+	162    0.932470
+	163    2.032520
+	164    0.960912
+	165    2.384150
+	166    1.879130
+	167    1.238890
+	168    1.584300
+	169    1.118490
+	170    2.022970
+	171    0.000000
+	172    2.138820
+	173    2.533390
+	174    1.212340
+	175    0.059135
+	176    1.578260
+	177    1.725210
+	178    0.293153
+	179    0.000000
+	180    0.000000
+	181    1.699600
+	182    2.178650
+	183    1.792580
+	184    1.920800
+	185    0.000000
+	186    1.583250
+	187    0.343235
+	188    1.980010
+	189    0.980876
+	190    1.089380
+	191    0.979254
+	192    1.190450
+	193    1.738880
+	194    1.154100
+	195    1.981610
+	196    2.077180
+	197    1.566410
+	198    0.000000
+	199    1.990900
+	Name: ShannonDiversity
+	Data set 4:
+	200    1.036930
+	201    0.938018
+	202    0.995956
+	203    1.006970
+	204    0.968258
+	205    0.000000
+	206    0.416046
+	207    1.570310
+	208    2.122400
+	209    2.461440
+	210    0.969003
+	211    0.000000
+	212    2.204760
+	213    0.999556
+	214    1.820140
+	215    1.581250
+	216    1.950260
+	217    1.633000
+	218    1.854850
+	219    0.159017
+	220    0.997556
+	221    1.935620
+	222    1.814500
+	223    0.999802
+	224    0.000000
+	225    0.186966
+	226    1.569840
+	227    1.660550
+	228    0.998564
+	229    2.280260
+	230    1.560220
+	231    0.992335
+	232    1.557250
+	233    1.536150
+	234    1.584580
+	235    2.195650
+	236    1.327320
+	237    2.165350
+	238    1.711200
+	239    1.885540
+	240    0.960891
+	241    0.958280
+	242    0.990460
+	243    2.175780
+	244    0.890169
+	245    1.922790
+	246    1.564330
+	247    1.870380
+	248    1.262280
+	249    0.000000
+	Name: ShannonDiversity
+	
+	# compute RankSum P value
+	z_stat, p_val = stats.ranksums(treatment3, treatment4)
 
-	print experiment4
-
-	[ 37.79410956  30.15902312  45.38095056  48.54958363  47.86142528
-	  40.29446501  33.87154296  47.93095233  47.49276641  46.16960774
-	  39.2747562   23.60764727  36.1324458   30.60504485  43.65414926
-	  34.49818113  54.88851323  49.05865549  42.83492157  40.09497425
-	  27.24463829  46.34087852  34.35112739  46.51584338  52.38865353
-	  40.67349906  45.40321415  36.09856076  52.37654715  30.63914578]
+	print "MWW RankSum P for treatments 3 and 4 =", p_val
 	
-	z_stat, p_val = stats.ranksums(experiment3, experiment4)
+	MWW RankSum P for treatments 3 and 4 = 0.994499571124
 	
-	print "MWW RankSum P for experiments 3 and 4 =", p_val
-	
-	MWW RankSum P for experiments 3 and 4 = 0.383055045846
-
 With P > 0.05, we must say that the distributions do not significantly differ.
-Thus the treatments in experiments 3 and 4 do not have a significant impact on
-the measured value.
+Thus changing the parasite virulence between 0.8 and 0.9 does not result in a
+significant change in Shannon Diversity.
 
 ### One-way analysis of variance (ANOVA)
 
-If you need to compare more than two data sets at a time, an ANOVA is your best
-bet. For example, we have the results from three experiments with overlapping
-95% confidence intervals, and we want to confirm that the results for all three
-experiments are not significantly different.
+If you need to compare more than two data sets at a time, an ANOVA is your best bet. For
+example, we have the results from three experiments with overlapping 95% confidence
+intervals, and we want to confirm that the results for all three experiments are not
+significantly different.
 
-	import numpy as np
+	treatment1 = experimentDF[experimentDF["Virulence"] == 0.7]["ShannonDiversity"]
+	treatment2 = experimentDF[experimentDF["Virulence"] == 0.8]["ShannonDiversity"]
+	treatment3 = experimentDF[experimentDF["Virulence"] == 0.9]["ShannonDiversity"]
 	
-	# generate 3 sets of normally distributed numbers
-	experiment1 = np.random.normal(20, 3, 30)
-	experiment2 = np.random.normal(18, 5, 30)
-	experiment3 = np.random.normal(19, 7, 30)
+	print "Data set 1:\n", treatment1
+	print "Data set 2:\n", treatment2
+	print "Data set 3:\n", treatment3
 	
-	print experiment1
-	
-	[ 19.04378835  22.50421579  24.34944666  22.51816612  20.58749006
-	  12.8445342   18.30013223  27.3257252   17.94535996  18.91757146
-	  18.37062731  18.65238219  18.38667562  22.60495363  24.76745954
-	  23.04309348  18.85710967  18.21680551  27.35845316  19.88643909
-	  20.99802896  20.66157181  21.80630328  23.24209409  16.03063632
-	  22.34485767  20.92888144  19.68930839  16.73974945  18.07995139]
-	
-	print experiment2
-	
-	[ 27.81170323  10.94953741  16.9971959   15.61408967  15.45994329
-	  18.65727731  21.58641937  15.52435895  11.2323641   20.92883425
-	  23.79364776  15.72508182  25.26726475  21.97336108  14.85964094
-	  16.72098642  13.01312028  16.41548278  16.46276207  20.45849468
-	  15.48204606  21.02902367  23.97056686  24.01698211  16.95786928
-	  21.32214887  15.14553344  16.77880364  19.99548804  18.45136648]
-	  
-	print experiment3
-	  
-	[ 13.43821528  14.53030599  21.96858873  14.87958515   6.77025586
-	  33.31744607   6.96561297  33.32049064  21.16775149  19.06799499
-	  29.8830259    8.11961867  30.82037979  16.36569719  13.32181128
-	  30.09211718  19.61686393  24.02101628  16.29424766  23.98372488
-	  22.32620927   8.50589624  30.20030432  24.58815171  12.49966463
-	  30.50019967  17.89961298  23.10544466  13.70368434  14.70896301]
+	Data set 1:
+	100    1.595440
+	101    1.419730
+	102    0.000000
+	103    0.000000
+	104    0.787591
+	105    2.234270
+	106    1.700440
+	107    0.954747
+	108    1.127320
+	109    1.761330
+	110    0.000000
+	111    0.374074
+	112    1.836250
+	113    1.583900
+	114    0.998377
+	115    0.341714
+	116    0.892717
+	117    2.142960
+	118    1.824870
+	119    0.999703
+	120    0.957757
+	121    1.152910
+	122    0.597295
+	123    1.959020
+	124    0.764003
+	125    0.614147
+	126    0.617618
+	127    2.235990
+	128    0.000000
+	129    2.484220
+	130    0.008294
+	131    1.003480
+	132    1.292820
+	133    2.185060
+	134    2.421770
+	135    0.713224
+	136    0.551367
+	137    0.006377
+	138    0.948393
+	139    2.257370
+	140    1.394850
+	141    0.547157
+	142    2.072580
+	143    1.323440
+	144    1.001340
+	145    1.042600
+	146    0.000000
+	147    1.139100
+	148    2.383260
+	149    0.056819
+	Name: ShannonDiversity
+	Data set 2:
+	150    1.433800
+	151    2.079700
+	152    0.892139
+	153    2.384740
+	154    0.006980
+	155    1.971760
+	156    0.000000
+	157    1.428470
+	158    1.715950
+	159    0.000000
+	160    0.421927
+	161    1.179920
+	162    0.932470
+	163    2.032520
+	164    0.960912
+	165    2.384150
+	166    1.879130
+	167    1.238890
+	168    1.584300
+	169    1.118490
+	170    2.022970
+	171    0.000000
+	172    2.138820
+	173    2.533390
+	174    1.212340
+	175    0.059135
+	176    1.578260
+	177    1.725210
+	178    0.293153
+	179    0.000000
+	180    0.000000
+	181    1.699600
+	182    2.178650
+	183    1.792580
+	184    1.920800
+	185    0.000000
+	186    1.583250
+	187    0.343235
+	188    1.980010
+	189    0.980876
+	190    1.089380
+	191    0.979254
+	192    1.190450
+	193    1.738880
+	194    1.154100
+	195    1.981610
+	196    2.077180
+	197    1.566410
+	198    0.000000
+	199    1.990900
+	Name: ShannonDiversity
+	Data set 3:
+	200    1.036930
+	201    0.938018
+	202    0.995956
+	203    1.006970
+	204    0.968258
+	205    0.000000
+	206    0.416046
+	207    1.570310
+	208    2.122400
+	209    2.461440
+	210    0.969003
+	211    0.000000
+	212    2.204760
+	213    0.999556
+	214    1.820140
+	215    1.581250
+	216    1.950260
+	217    1.633000
+	218    1.854850
+	219    0.159017
+	220    0.997556
+	221    1.935620
+	222    1.814500
+	223    0.999802
+	224    0.000000
+	225    0.186966
+	226    1.569840
+	227    1.660550
+	228    0.998564
+	229    2.280260
+	230    1.560220
+	231    0.992335
+	232    1.557250
+	233    1.536150
+	234    1.584580
+	235    2.195650
+	236    1.327320
+	237    2.165350
+	238    1.711200
+	239    1.885540
+	240    0.960891
+	241    0.958280
+	242    0.990460
+	243    2.175780
+	244    0.890169
+	245    1.922790
+	246    1.564330
+	247    1.870380
+	248    1.262280
+	249    0.000000
+	Name: ShannonDiversity
 
+	# compute one-way ANOVA P value	
 	from scipy import stats
-	
-	f_val, p_val = stats.f_oneway(experiment1, experiment2, experiment3)
+		
+	f_val, p_val = stats.f_oneway(treatment1, treatment2, treatment3)
 	
 	print "One-way ANOVA P =", p_val
 	
-	One-way ANOVA P = 0.333441170471
+	One-way ANOVA P = 0.381509481874
 	
 If P > 0.05, we can claim with high confidence that the means of the results of all three
 experiments are not significantly different.
@@ -585,279 +1093,127 @@ experiments are not significantly different.
 ### Bootstrapped 95% confidence intervals
 
 Oftentimes in wet lab research, it's difficult to perform the 20 replicate runs
-recommended for computing reliable confidence intervals with SEM In this case,
-bootstrapping the confidence intervals is a much more accurate method of
-determining the 95% confidence interval around your experiment's mean
-performance.
+recommended for computing reliable confidence intervals with SEM.
 
-Unfortunately, SciPy doesn't have bootstrapping built into its standard library
-yet. On the bright side, however, we have a pre-built bootstrapping function
-below:
+In this case, bootstrapping the confidence intervals is a much more accurate method of
+determining the 95% confidence interval around your experiment's mean performance.
+
+Unfortunately, SciPy doesn't have bootstrapping built into its standard library yet.
+However, we have a pre-built bootstrapping function below:
 
 	# Confidence interval bootstrapping function
 	# Written by: cevans
 	# URL: https://bitbucket.org/cevans/bootstrap/
 	#
 	# Input parameters:
-   	#	data        = data to get bootstrapped CIs for
-    #	statfun     = function to compute CIs over (usually, mean)
-    #	alpha       = size of CIs (0.05 --> 95% CIs). default = 0.05
-    #	n_samples   = # of bootstrap populations to construct. default = 10,000
+	#	data        = data to get bootstrapped CIs for
+	#	statfun     = function to compute CIs over (usually, mean)
+	#	alpha       = size of CIs (0.05 --> 95% CIs). default = 0.05
+	#	n_samples   = # of bootstrap populations to construct. default = 10,000
 	#
 	# Returns:
-   	#	bootstrapped confidence interval: [low, high]
-
+	#	bootstrapped confidence interval: [low, high]
+	
 	from numpy.random import randint
 	from scipy.stats import norm
 	from numpy import *
-
+	
 	def ci(data, statfun, alpha=0.05, n_samples=10000, method='bca'):
-       
-        # Ensure that our data is, in fact, an array.
-        data = array(data)
-
-        # First create array of bootstrap sample indexes:
-        indexes = randint(data.shape[0],size=(n_samples,data.shape[0]))
-
-        # Then apply this to get the bootstrap samples and statistics over them.
-        samples = data[indexes]
-
-        stat = array([statfun(x) for x in samples])
-        
-        # Normal-theory Interval --- doesn't use sorted statistics.
-        if method == 'nti':
-                bstd = std(stat)
-                pass
-        
-        stat_sorted = sort(stat)
-        
-        # Percentile Interval
-        if method == 'pi':
-                return ( stat_sorted[round(n_samples*alpha/2)],	stat_sorted[round(n_samples*(1-alpha/2))] )
-
-        # Bias-Corrected Accelerated Interval
-        elif method == 'bca':
-                ostat = statfun(data)
-
-                z = norm.ppf( ( 1.0*sum(stat < ostat) + 0.5*sum(stat == ostat) ) / (n_samples + 1) )
-                
-                # Calculate the jackknife distribution and corresponding statistics quickly.
-                j_indexes = (lambda n: delete(tile(array(range(0,n)),n),range(0,n*n,n+1)).reshape((n,n-1)))(len(data))
-                jstat = [statfun(x) for x in data[j_indexes]]
-                jmean = mean(jstat)
-
-                a = sum( (jstat - jmean)**3 ) / ( 6.0 * sum( (jstat - jmean)**2 )**1.5 )
-
-                zp = z + norm.ppf(1-alpha/2)
-                zm = z - norm.ppf(1-alpha/2)
-
-                a1 = norm.cdf(z + zm/(1-a*zm))
-                a2 = norm.cdf(z + zp/(1-a*zp))
-
-                return (stat_sorted[round(n_samples*a1)],stat_sorted[round(n_samples*a2)])
-
-        else:
-                raise "Method %s not supported" % method
-
-Bootstrapping 95% confidence intervals around the mean with this function is
-simple:
-
-	import scipy
-	import numpy as np
 	
-	experiment1 = np.random.normal(15, 3, 10)
+		# Ensure that our data is, in fact, an array.
+		data = array(data)
+		
+		# First create array of bootstrap sample indexes:
+		indexes = randint(data.shape[0],size=(n_samples,data.shape[0]))
 	
-	print experiment1
+		# Then apply this to get the bootstrap samples and statistics over them.
+		samples = data[indexes]
+		
+		stat = array([statfun(x) for x in samples])
+		
+		# Normal-theory Interval --- doesn't use sorted statistics.
+		if method == 'nti':
+			bstd = std(stat)
+			pass
+		
+		stat_sorted = sort(stat)
+		
+		# Percentile Interval
+		if method == 'pi':
+			return ( stat_sorted[round(n_samples*alpha/2)],	stat_sorted[round(n_samples*(1-alpha/2))] )
+	
+		# Bias-Corrected Accelerated Interval
+		elif method == 'bca':
+			ostat = statfun(data)
+			
+			z = norm.ppf( ( 1.0*sum(stat < ostat) + 0.5*sum(stat == ostat) ) / (n_samples + 1) )
+			
+			# Calculate the jackknife distribution and corresponding statistics quickly.
+			j_indexes = (lambda n: delete(tile(array(range(0,n)),n),range(0,n*n,n+1)).reshape((n,n-1)))(len(data))
+			jstat = [statfun(x) for x in data[j_indexes]]
+			jmean = mean(jstat)
+			
+			a = sum( (jstat - jmean)**3 ) / ( 6.0 * sum( (jstat - jmean)**2 )**1.5 )
+			
+			zp = z + norm.ppf(1-alpha/2)
+			zm = z - norm.ppf(1-alpha/2)
+			
+			a1 = norm.cdf(z + zm/(1-a*zm))
+			a2 = norm.cdf(z + zp/(1-a*zp))
+	
+			return (stat_sorted[round(n_samples*a1)],stat_sorted[round(n_samples*a2)])
+		
+		else:
+			raise "Method %s not supported" % method
+			
+Bootstrapping 95% confidence intervals around the mean with this function is simple:
 
-	[ 15.85892027  19.46669957  16.94655472  15.23605432  14.42308533
-	  11.26638304  20.18231971  21.21970167  11.40363899  16.38765404]
+	treatment1 = experimentDF[experimentDF["Virulence"] == 0.8]["ShannonDiversity"][:10]
+	
+	print "Small data set:\n", treatment1
+	
+	Small data set:
+	150    1.433800
+	151    2.079700
+	152    0.892139
+	153    2.384740
+	154    0.006980
+	155    1.971760
+	156    0.000000
+	157    1.428470
+	158    1.715950
+	159    0.000000
+	Name: ShannonDiversity
+	
+	# compute 95% confidence intervals around the mean
+	CIs = ci(data=treatment1, statfun=scipy.mean)
 
-	CIs = ci(data=experiment1, statfun=scipy.mean)
+	print "Bootstrapped 95% confidence intervals\nLow:", CIs[0], "\nHigh:", CIs[1]
 	
-	print "Bootstrapped 95% confidence interval low:", CIs[0], ", high:", CIs[1]
-	
-	Bootstrapped 95% confidence interval low: 14.2865506829 , high: 18.2302554524
+	Bootstrapped 95% confidence intervals
+	Low: 0.659028048 
+	High: 1.722468024
 	
 Note that you can change the range of the confidence interval by setting the alpha:
 
 	# 80% confidence interval
-	CIs = ci(experiment1, scipy.mean, alpha=0.2)
-	print "Bootstrapped 80% confidence interval low:", CIs[0], ", high:", CIs[1]
+	CIs = ci(treatment1, scipy.mean, alpha=0.2)
+	print "Bootstrapped 80% confidence interval\nLow:", CIs[0], "\nHigh:", CIs[1]
+	
+	Bootstrapped 80% confidence interval
+	Low: 0.827291024 
+	High: 1.5420059
 
-	Bootstrapped 80% confidence interval low: 14.9653005047 , high: 17.5814853635
-
-And also modify the size of the bootstrapped sample pool that the confidence
-intervals are taken from:
+And also modify the size of the bootstrapped sample pool that the confidence intervals
+are taken from:
 
 	# bootstrap 20,000 samples instead of only 10,000
-	CIs = ci(experiment1, scipy.mean, n_samples=20000)
-	"Bootstrapped 95% confidence interval low:", CIs[0], ", high:", CIs[1]
+	CIs = ci(treatment1, scipy.mean, n_samples=20000)
+	print "Bootstrapped 95% confidence interval w/ 20,000 samples\nLow:", CIs[0], "\nHigh:", CIs[1]
 	
-	Bootstrapped 95% confidence interval low: 14.2447813408 , high: 18.2276982261
+	Bootstrapped 95% confidence interval w/ 20,000 samples
+	Low: 0.644756972 
+	High: 1.7071459
 	
 Generally, bootstrapped 95% confidence intervals provide more accurate confidence
-intervals than 95% confidence intervals estimated from the SEM
-
-## Python's pandas Module
-
-The pandas module provides powerful, efficient, R-like DataFrame objects
-capable of calculating statistics en masse on the entire DataFrame. DataFrames
-are very useful for when you need to compute statistics over multiple replicate
-runs.
-
-For the purposes of this tutorial, `experimentList` and `experimentDF` shall be
-assigned by the following Python code:
-
-	import pandas
-	import numpy as np
-	
-	experimentList = []
-	
-	for replicate in range(30):
-		
-		experimentList.append(pandas.DataFrame(np.random.rand(600, 10),
-						columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']))
-	
-	experimentDF = (pandas.concat(experimentList, axis=1, keys=range(len(experimentList)))
-			 .swaplevel(0, 1, axis=1)
-			 .sortlevel(axis=1)
-			 .groupby(level=0, axis=1))
-
-### Blank data (NA or NaN) in pandas
-
-Blank data is even easier to handle in pandas. Here's an example data set
-with NA/NaN values.
-
-	import pandas
-	import numpy as np
-	
-	experimentDFWithNA = pandas.DataFrame(np.random.rand(10, 3),
-											columns = ['A', 'B', 'C'])
-	
-	experimentDFWithNA["A"][np.random.randint(10, size=3)] = NaN
-	experimentDFWithNA["B"][np.random.randint(10, size=3)] = NaN
-	experimentDFWithNA["C"][np.random.randint(10, size=3)] = NaN
-	
-	print experimentDFWithNA
-	
-	          A         B         C
-	0       NaN  0.523578       NaN
-	1  0.146291  0.282076  0.654592
-	2  0.784701       NaN  0.142801
-	3  0.847388  0.495618  0.532171
-	4  0.698493       NaN  0.215417
-	5  0.834346       NaN  0.451721
-	6       NaN  0.589255  0.658829
-	7  0.866298  0.129788  0.666024
-	8  0.694930  0.156945  0.420747
-	9       NaN  0.572037  0.970791
-
-DataFrame methods automatically ignore NA/NaN values.
-
-	print experimentDFWithNA.sum()
-	
-	A    4.872448
-	B    2.749297
-	C    4.713094
-
-However, not all methods in Python are guaranteed to handle NA/NaN values. Thus,
-it behooves you to take care of the NA/NaN values before performing your analysis.
-You can either:
-
-**(1) filter out all of the entries with NA/NaN**
-
-	# NOTE: this drops the entire row if any of its entries are NA/NaN!
-	print experimentDFWithNA.dropna()
-	
-	          A         B         C
-	1  0.146291  0.282076  0.654592
-	3  0.847388  0.495618  0.532171
-	7  0.866298  0.129788  0.666024
-	8  0.694930  0.156945  0.420747
-
-If you only care about NA/NaN values in a specific column, you can specify
-the column name first.
-
-	print aexperimentDFWithNA["B"].dropna()
-	
-	0    0.523578
-	1    0.282076
-	3    0.495618
-	6    0.589255
-	7    0.129788
-	8    0.156945
-	9    0.572037
-	Name: B
-
-**(2) replace all of the NA/NaN entries with a valid value**
-
-	print experimentDFWithNA.fillna(0.0)
-	
-	         A         B         C
-	0  0.000000  0.523578  0.000000
-	1  0.146291  0.282076  0.654592
-	2  0.784701  0.000000  0.142801
-	3  0.847388  0.495618  0.532171
-	4  0.698493  0.000000  0.215417
-	5  0.834346  0.000000  0.451721
-	6  0.000000  0.589255  0.658829
-	7  0.866298  0.129788  0.666024
-	8  0.694930  0.156945  0.420747
-	9  0.000000  0.572037  0.970791
-
-### Mean
-
-Conveniently, DataFrames have all kinds of built-in functions to perform
-standard operations on them en masse: `add()`, `sub()`, `mul()`, `div()`,
-`mean()`, `std()`, etc.  The full list is located at:
-http://pandas.sourceforge.net/generated/pandas.DataFrame.html
-
-Thus, computing the mean of an entire DataFrame only takes one line of code:
-
-	from pandas import *
-
-	meanDF = experimentDF.mean()
-
-### Variance
-
-Computing the variance is similarly easy:
-
-	from pandas import *
-
-	varianceDF = experimentDF.var()
-
-### Standard Error of the Mean (SEM)
-
-Since DataFrames don't have a built-in SEM function, you have to compute it
-yourself:
-
-	from pandas import *
-	
-	# standard error = standard deviation / sqrt(number of samples)
-	standardDeviationDF = experimentDF.std()
-	
-	numSamples = len(experimentList)
-	
-	standardErrorDF = standardDeviationDF.div( sqrt(numSamples) )
-	
-	# 95% confidence interval around the mean = 1.96 * standard error
-	confidenceIntervalDF = standardErrorDF.mul(1.96)
-
-### NumPy/SciPy methods on pandas DataFrames
-
-Finally, NumPy and SciPy methods can be applied directly to pandas DataFrames
-with the `aggregate()` function.
-
-	import numpy as np
-	from scipy import stats as st
-	
-	# mean
-	meanDF = experimentDF.aggregate((lambda x: np.mean(x, axis=1)))
-	
-	# geometric mean
-	geomeanDF = experimentDF.aggregate((lambda x: st.gmean(x, axis=1)))
-	
-	# much easier way to compute standard error of the mean
-	semDF = experimentDF.aggregate((lambda x: st.sem(x, axis=1)))
-	
-	# etc.
+intervals than 95% confidence intervals estimated from the SEM.
