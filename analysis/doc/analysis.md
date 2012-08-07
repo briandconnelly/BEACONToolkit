@@ -39,24 +39,17 @@ what they mean for your hypotheses.
 So what does a p-value tell you then? The p-value is simply the probability of
 observing data as extreme as those seen in your data set under the null
 hypothesis. The null hypothesis usually ends up being that the slope is 0, the
-mean is 0, or the difference between two samples is 0. We can demonstrate what
-exactly that means by computing the p-value of a sample, with the null
-hypothesis that the true mean is equal to zero, by resampling our data over and
-over and counting the number of times we observe a mean less than or equal to
-zero. This technique is called **bootstrapping** or sometimes, more generally,
-**resampling**. 
-
-![New Fake Distribution](https://github.com/briandconnelly/BEACONToolkit/raw/master/analysis/doc/figures/fake_hist.png)
-
+mean is 0, or the difference between two samples is 0. 
 
 Let's say we also have a data set of the measured effect of cold temperature on
-body weight in some other species of fish.
+body weight in some other species of fish.  We want to know if this effect size
+could be explained simply by chance and the real effect is statistically 
+indistinguishble from zero.
 
 	cold_effect = rnorm(50, mean=1.0, sd=5)
 	
-We want to know if colder temperatures really do lead to heavier fish.  One way
-to test this would be to ask how often we would see these means in body
-temperature if the true mean was zero.  This would be called a parametric
+One way to test this would be to ask how often we would see this mean effect 
+size if the true mean was zero.  This would be called a parametric 
 **Monte Carlo** test. To do this, we would need to specify a distribution for
 these temperature means to be drawn from.  In this case we know our data came
 from a normal distribution, so we could perform this test by looking at means
