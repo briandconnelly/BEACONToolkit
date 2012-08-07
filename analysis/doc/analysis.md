@@ -326,7 +326,7 @@ For the purposes of this tutorial, we will use Luis' parasite data set:
 	from pandas import *
 	
 	# must specify that blank space " " is NaN
-	experimentDF = read_csv("data-analysis-python/parasite_data.csv", na_values=[" "])
+	experimentDF = read_csv("parasite_data.csv", na_values=[" "])
 	
 	print experimentDF
 	
