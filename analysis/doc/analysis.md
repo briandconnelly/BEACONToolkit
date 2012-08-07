@@ -1185,6 +1185,8 @@ Bootstrapping 95% confidence intervals around the mean with this function is sim
 	159    0.000000
 	Name: ShannonDiversity
 	
+	import scipy
+	
 	# compute 95% confidence intervals around the mean
 	CIs = ci(data=treatment1, statfun=scipy.mean)
 
