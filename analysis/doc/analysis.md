@@ -1099,75 +1099,18 @@ In this case, bootstrapping the confidence intervals is a much more accurate met
 determining the 95% confidence interval around your experiment's mean performance.
 
 Unfortunately, SciPy doesn't have bootstrapping built into its standard library yet.
-However, we have a pre-built bootstrapping function below:
+However, there is already a scikit out there for bootstrapping. Enter the following
+command to install it:
 
-	# Confidence interval bootstrapping function
-	# Written by: cevans
-	# URL: https://bitbucket.org/cevans/bootstrap/
-	#
-	# Input parameters:
-	#	data        = data to get bootstrapped CIs for
-	#	statfun     = function to compute CIs over (usually, mean)
-	#	alpha       = size of CIs (0.05 --> 95% CIs). default = 0.05
-	#	n_samples   = # of bootstrap populations to construct. default = 10,000
-	#
-	# Returns:
-	#	bootstrapped confidence interval: [low, high]
-	
-	from numpy.random import randint
-	from scipy.stats import norm
-	from numpy import *
-	
-	def ci(data, statfun, alpha=0.05, n_samples=10000, method='bca'):
-	
-		# Ensure that our data is, in fact, an array.
-		data = array(data)
-		
-		# First create array of bootstrap sample indexes:
-		indexes = randint(data.shape[0],size=(n_samples,data.shape[0]))
-	
-		# Then apply this to get the bootstrap samples and statistics over them.
-		samples = data[indexes]
-		
-		stat = array([statfun(x) for x in samples])
-		
-		# Normal-theory Interval --- doesn't use sorted statistics.
-		if method == 'nti':
-			bstd = std(stat)
-			pass
-		
-		stat_sorted = sort(stat)
-		
-		# Percentile Interval
-		if method == 'pi':
-			return ( stat_sorted[round(n_samples*alpha/2)],	stat_sorted[round(n_samples*(1-alpha/2))] )
-	
-		# Bias-Corrected Accelerated Interval
-		elif method == 'bca':
-			ostat = statfun(data)
-			
-			z = norm.ppf( ( 1.0*sum(stat < ostat) + 0.5*sum(stat == ostat) ) / (n_samples + 1) )
-			
-			# Calculate the jackknife distribution and corresponding statistics quickly.
-			j_indexes = (lambda n: delete(tile(array(range(0,n)),n),range(0,n*n,n+1)).reshape((n,n-1)))(len(data))
-			jstat = [statfun(x) for x in data[j_indexes]]
-			jmean = mean(jstat)
-			
-			a = sum( (jstat - jmean)**3 ) / ( 6.0 * sum( (jstat - jmean)**2 )**1.5 )
-			
-			zp = z + norm.ppf(1-alpha/2)
-			zm = z - norm.ppf(1-alpha/2)
-			
-			a1 = norm.cdf(z + zm/(1-a*zm))
-			a2 = norm.cdf(z + zp/(1-a*zp))
-	
-			return (stat_sorted[round(n_samples*a1)],stat_sorted[round(n_samples*a2)])
-		
-		else:
-			raise "Method %s not supported" % method
+> sudo pip install -e git+http://github.org/cgevans/scikits-bootstrap.git#egg=Package
+
+Yyou may need to install `pip` first, e.g., for Mac:
+
+> sudo easy_install pip
 			
 Bootstrapping 95% confidence intervals around the mean with this function is simple:
 
+	# subset a list of 10 data points
 	treatment1 = experimentDF[experimentDF["Virulence"] == 0.8]["ShannonDiversity"][:10]
 	
 	print "Small data set:\n", treatment1
@@ -1186,9 +1129,10 @@ Bootstrapping 95% confidence intervals around the mean with this function is sim
 	Name: ShannonDiversity
 	
 	import scipy
+	import scikits.bootstrap as bootstrap
 	
 	# compute 95% confidence intervals around the mean
-	CIs = ci(data=treatment1, statfun=scipy.mean)
+	CIs = bootstrap.ci(data=treatment1, statfunction=scipy.mean)
 
 	print "Bootstrapped 95% confidence intervals\nLow:", CIs[0], "\nHigh:", CIs[1]
 	
@@ -1199,7 +1143,7 @@ Bootstrapping 95% confidence intervals around the mean with this function is sim
 Note that you can change the range of the confidence interval by setting the alpha:
 
 	# 80% confidence interval
-	CIs = ci(treatment1, scipy.mean, alpha=0.2)
+	CIs = bootstrap.ci(treatment1, scipy.mean, alpha=0.2)
 	print "Bootstrapped 80% confidence interval\nLow:", CIs[0], "\nHigh:", CIs[1]
 	
 	Bootstrapped 80% confidence interval
@@ -1210,7 +1154,7 @@ And also modify the size of the bootstrapped sample pool that the confidence int
 are taken from:
 
 	# bootstrap 20,000 samples instead of only 10,000
-	CIs = ci(treatment1, scipy.mean, n_samples=20000)
+	CIs = bootstrap.ci(treatment1, scipy.mean, n_samples=20000)
 	print "Bootstrapped 95% confidence interval w/ 20,000 samples\nLow:", CIs[0], "\nHigh:", CIs[1]
 	
 	Bootstrapped 95% confidence interval w/ 20,000 samples
