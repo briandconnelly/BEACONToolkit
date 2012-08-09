@@ -1104,7 +1104,7 @@ command to install it:
 
 > sudo pip install -e git+http://github.org/cgevans/scikits-bootstrap.git#egg=Package
 
-Yyou may need to install `pip` first, e.g., for Mac:
+You may need to install `pip` first, e.g., for Mac:
 
 > sudo easy_install pip
 			
