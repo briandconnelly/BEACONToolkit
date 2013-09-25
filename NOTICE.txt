@@ -1,4 +1,4 @@
-SEEDS - Stochastic Ecological and Evolutionary Dynamics System
+BEACON Toolkit
 
 Copyright 2012 BEACON Toolkit Contributers
 
